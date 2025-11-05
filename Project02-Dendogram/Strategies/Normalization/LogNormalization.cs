@@ -10,20 +10,14 @@ namespace Project02_Dendogram.Strategies.Normalization
 {
     internal class LogNormalization : INormalizationStrategy
     {
-        public void Normalize(CustomList<Movie> movies)
+        public void CalculateStats(CustomList<Movie> movies, int featureIndex)
         {
-            var iterator = movies.CreateIterator();
-            while (iterator.HasNext())
-            {
-                Movie movie = iterator.Next();
+            // No necesita calcular estadísticas previas
+        }
 
-                for (int i = 0; i < 7; i++)
-                {
-                    double x = movie.FeatureVector.GetAt(i);
-                    double normalized = Math.Log(x + 1);
-                    movie.WeightedFeatureVector.SetAt(i, normalized);
-                }
-            }
+        public double Normalize(double value)
+        {
+            return Math.Log(value + 1);
         }
     }
 }

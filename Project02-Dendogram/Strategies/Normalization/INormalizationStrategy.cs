@@ -10,6 +10,10 @@ namespace Project02_Dendogram.Strategies.Normalization
 {
     internal interface INormalizationStrategy
     {
-        void Normalize(CustomList<Movie> movies);
+        // Calcula estadísticas necesarias para la normalización (min, max, mean, etc.)
+        void CalculateStats(CustomList<Movie> movies, int featureIndex);
+
+        // Normaliza un valor individual
+        double Normalize(double value);
     }
 }

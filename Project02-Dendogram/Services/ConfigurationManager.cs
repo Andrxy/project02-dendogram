@@ -6,43 +6,41 @@ namespace Project02_Dendogram.Services
 {
     internal class ConfigurationManager
     {
-        // Singleton simple, thread-safe
         public static readonly ConfigurationManager Instance = new ConfigurationManager();
 
-        // Pesos y estrategias
         public CustomVector<double> Weights { get; private set; }
-        public INormalizationStrategy NormalizationStrategy { get; private set; }
+        public NormalizationConfig NormalizationConfig { get; private set; }
         public IDistanceStrategy DistanceStrategy { get; private set; }
 
         private ConfigurationManager()
         {
             InitializeDefaultWeights();
-            NormalizationStrategy = NormalizationFactory.CreateNormalization("minmax");
+            NormalizationConfig = new NormalizationConfig();
             DistanceStrategy = DistanceFactory.CreateDistance("euclidean");
         }
 
         private void InitializeDefaultWeights()
         {
             Weights = new CustomVector<double>();
-            Weights.Add(1.0);  // Budget
-            Weights.Add(1.0);  // Popularity
-            Weights.Add(1.0);  // Revenue
-            Weights.Add(1.0);  // Runtime
-            Weights.Add(1.0);  // VoteAverage
-            Weights.Add(1.0);  // VoteCount
-            Weights.Add(1.0);  // ReleaseYear
+            Weights.Add(1.0);
+            Weights.Add(1.0);
+            Weights.Add(1.0);
+            Weights.Add(1.0);
+            Weights.Add(1.0);
+            Weights.Add(1.0);
+            Weights.Add(1.0);
         }
 
         public void InitializeWeightsForDataset(VectorizationService vectorizer)
         {
-            AddWeights(vectorizer.Indexer.GenreIndex.Count, 15.0);    // Géneros
-            AddWeights(vectorizer.Indexer.CastIndex.Count, 1.0);     // Cast
-            AddWeights(vectorizer.Indexer.DirectorIndex.Count, 1.0); // Director
-            AddWeights(vectorizer.Indexer.KeywordsIndex.Count, 1.0); // Director
-            AddWeights(vectorizer.Indexer.ProductionCountriesIndex.Count, 1.0); // Director
-            AddWeights(vectorizer.Indexer.SpokenLanguagesIndex.Count, 1.0); // Idiomas
+            AddWeights(vectorizer.Indexer.GenreIndex.Count, 15.0);
+            AddWeights(vectorizer.Indexer.CastIndex.Count, 1.0);
+            AddWeights(vectorizer.Indexer.DirectorIndex.Count, 1.0);
+            AddWeights(vectorizer.Indexer.KeywordsIndex.Count, 1.0);
+            AddWeights(vectorizer.Indexer.ProductionCountriesIndex.Count, 1.0);
+            AddWeights(vectorizer.Indexer.SpokenLanguagesIndex.Count, 1.0);
 
-            Console.WriteLine($"Configuración de pesos inicializada:");
+            Console.WriteLine($"\n⚙️ Configuración de pesos inicializada:");
             Console.WriteLine($"  Total features: {Weights.Count}");
         }
 
@@ -52,17 +50,19 @@ namespace Project02_Dendogram.Services
                 Weights.Add(weight);
         }
 
-        // ==========================
-        // Métodos para cambiar configuración (SOLID: Open/Closed)
-        // ==========================
         public void UpdateWeight(int index, double weight)
         {
             Weights.SetAt(index, weight);
         }
 
-        public void SetNormalizationStrategy(string name)
+        public void SetNormalizationStrategy(int featureIndex, string strategyName)
         {
-            NormalizationStrategy = NormalizationFactory.CreateNormalization(name);
+            NormalizationConfig.SetStrategy(featureIndex, strategyName);
+        }
+
+        public void SetNormalizationStrategyByName(string featureName, string strategyName)
+        {
+            NormalizationConfig.SetStrategyByName(featureName, strategyName);
         }
 
         public void SetDistanceMetric(string name)
@@ -70,5 +70,10 @@ namespace Project02_Dendogram.Services
             DistanceStrategy = DistanceFactory.CreateDistance(name);
         }
 
+        public void PrintConfiguration()
+        {
+            NormalizationConfig.PrintConfiguration();
+            Console.WriteLine($"\n📏 Métrica de distancia: {DistanceStrategy.GetType().Name}");
+        }
     }
 }

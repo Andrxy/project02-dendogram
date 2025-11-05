@@ -22,30 +22,52 @@ namespace Project02_Dendogram
             VectorizationService vectorization = new VectorizationService();
             vectorization.VectorizeMovies(movies);
 
-            // 3️⃣ Normalizar y ponderar
+            // 3️⃣ Configurar normalización personalizada
             ConfigurationManager config = ConfigurationManager.Instance;
             config.InitializeWeightsForDataset(vectorization);
-            config.NormalizationStrategy.Normalize(movies);
+
+            // ⚙️ CONFIGURAR ESTRATEGIAS DE NORMALIZACIÓN PERSONALIZADAS
+            // Puedes configurar cada variable numérica con una estrategia diferente:
+
+            // Opción 1: Por índice (0-6)
+            config.SetNormalizationStrategy(0, "log");      // Budget → Log
+            config.SetNormalizationStrategy(1, "minmax");   // Popularity → MinMax
+            config.SetNormalizationStrategy(2, "log");      // Revenue → Log
+
+            // Opción 2: Por nombre de variable (más legible)
+            config.SetNormalizationStrategyByName("Runtime", "minmax");
+            config.SetNormalizationStrategyByName("VoteAverage", "zscore");
+            config.SetNormalizationStrategyByName("VoteCount", "log");
+            config.SetNormalizationStrategyByName("ReleaseYear", "minmax");
+
+            // Mostrar configuración
+            config.PrintConfiguration();
+
+            // 4️⃣ Aplicar normalización y ponderación
+            config.NormalizationConfig.Normalize(movies);
             WeightApplier.ApplyWeights(movies);
 
-            // 4️⃣ Mostrar vectores ponderados
-            Console.WriteLine("\n🎞️ Vectores ponderados:");
+            // 5️⃣ Mostrar algunos vectores ponderados
+            Console.WriteLine("\n🎞️ Primeros 3 vectores ponderados:");
             var it1 = movies.CreateIterator();
-            while (it1.HasNext())
+            int count = 0;
+            while (it1.HasNext() && count < 3)
             {
-                Console.WriteLine(it1.Next().WeightedFeatureVector.ToString());
+                Movie m = it1.Next();
+                Console.WriteLine($"{m.Title}: {m.WeightedFeatureVector.ToString()}");
+                count++;
             }
 
-            // 5️⃣ Construir dendrograma
+            // 6️⃣ Construir dendrograma
             Console.WriteLine("\n🌳 Construyendo dendrograma...");
             DendogramBuilder b = new DendogramBuilder(config.DistanceStrategy);
             Cluster root = b.BuildDendogram(movies);
 
-            // 6️⃣ Imprimir dendrograma textual
+            // 7️⃣ Imprimir dendrograma textual
             Console.WriteLine("\n🧩 Dendrograma textual:");
             PrintDendrogram(root, "");
 
-            Console.WriteLine("\n✅ Debug del dendrograma completado.");
+            Console.WriteLine("\n✅ Proceso completado.");
             Console.ReadLine();
         }
 
