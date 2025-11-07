@@ -30,5 +30,20 @@ namespace Project02_Dendogram.Presentation
         {
 
         }
+
+        private void CargarJSON_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void CargarCSV_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void Metricas_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+
+        }
     }
 }
