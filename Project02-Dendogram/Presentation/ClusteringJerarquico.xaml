@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Project02_Dendogram.Presentation"
         mc:Ignorable="d"
-        Title="Clustering Jerárquico" Height="700" Width="900">
+        Title="Clustering Jerárquico" Height="750" Width="950">
     <Grid Margin="10">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -41,7 +41,7 @@
 
         <!-- Sección de Configuración de Variables -->
         <GroupBox Grid.Row="2" Header="Configuración de Variables" Margin="0,0,0,10">
-            <ScrollViewer MaxHeight="200" VerticalScrollBarVisibility="Auto">
+            <ScrollViewer MaxHeight="250" VerticalScrollBarVisibility="Auto">
                 <StackPanel x:Name="VariablesPanel" Margin="5">
                     <!-- Variables numéricas -->
                     <TextBlock Text="Variables Numéricas:" FontWeight="Bold" Margin="0,0,0,5"/>
@@ -50,98 +50,154 @@
                     <Grid Margin="0,2">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="30"/>
-                            <ColumnDefinition Width="150"/>
-                            <ColumnDefinition Width="100"/>
+                            <ColumnDefinition Width="120"/>
+                            <ColumnDefinition Width="70"/>
+                            <ColumnDefinition Width="80"/>
+                            <ColumnDefinition Width="130"/>
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
                         <CheckBox x:Name="chkBudget" Grid.Column="0" IsChecked="True" VerticalAlignment="Center"/>
                         <TextBlock Grid.Column="1" Text="Budget" VerticalAlignment="Center"/>
                         <TextBlock Grid.Column="2" Text="Peso:" VerticalAlignment="Center" Margin="5,0"/>
-                        <TextBox x:Name="txtBudget" Grid.Column="3" Text="1.0" Width="80" HorizontalAlignment="Left"/>
+                        <TextBox x:Name="txtBudget" Grid.Column="3" Text="1.0" Width="70" HorizontalAlignment="Left"/>
+                        <TextBlock Grid.Column="4" Text="Normalización:" VerticalAlignment="Center" Margin="5,0"/>
+                        <ComboBox x:Name="cmbBudget" Grid.Column="5" Width="100" HorizontalAlignment="Left" SelectedIndex="0">
+                            <ComboBoxItem Content="MinMax" Tag="minmax"/>
+                            <ComboBoxItem Content="Z-Score" Tag="zscore"/>
+                            <ComboBoxItem Content="Log" Tag="log"/>
+                        </ComboBox>
                     </Grid>
 
                     <!-- Popularity -->
                     <Grid Margin="0,2">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="30"/>
-                            <ColumnDefinition Width="150"/>
-                            <ColumnDefinition Width="100"/>
+                            <ColumnDefinition Width="120"/>
+                            <ColumnDefinition Width="70"/>
+                            <ColumnDefinition Width="80"/>
+                            <ColumnDefinition Width="130"/>
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
                         <CheckBox x:Name="chkPopularity" Grid.Column="0" IsChecked="True" VerticalAlignment="Center"/>
                         <TextBlock Grid.Column="1" Text="Popularity" VerticalAlignment="Center"/>
                         <TextBlock Grid.Column="2" Text="Peso:" VerticalAlignment="Center" Margin="5,0"/>
-                        <TextBox x:Name="txtPopularity" Grid.Column="3" Text="1.0" Width="80" HorizontalAlignment="Left"/>
+                        <TextBox x:Name="txtPopularity" Grid.Column="3" Text="1.0" Width="70" HorizontalAlignment="Left"/>
+                        <TextBlock Grid.Column="4" Text="Normalización:" VerticalAlignment="Center" Margin="5,0"/>
+                        <ComboBox x:Name="cmbPopularity" Grid.Column="5" Width="100" HorizontalAlignment="Left" SelectedIndex="0">
+                            <ComboBoxItem Content="MinMax" Tag="minmax"/>
+                            <ComboBoxItem Content="Z-Score" Tag="zscore"/>
+                            <ComboBoxItem Content="Log" Tag="log"/>
+                        </ComboBox>
                     </Grid>
 
                     <!-- Revenue -->
                     <Grid Margin="0,2">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="30"/>
-                            <ColumnDefinition Width="150"/>
-                            <ColumnDefinition Width="100"/>
+                            <ColumnDefinition Width="120"/>
+                            <ColumnDefinition Width="70"/>
+                            <ColumnDefinition Width="80"/>
+                            <ColumnDefinition Width="130"/>
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
                         <CheckBox x:Name="chkRevenue" Grid.Column="0" IsChecked="True" VerticalAlignment="Center"/>
                         <TextBlock Grid.Column="1" Text="Revenue" VerticalAlignment="Center"/>
                         <TextBlock Grid.Column="2" Text="Peso:" VerticalAlignment="Center" Margin="5,0"/>
-                        <TextBox x:Name="txtRevenue" Grid.Column="3" Text="1.0" Width="80" HorizontalAlignment="Left"/>
+                        <TextBox x:Name="txtRevenue" Grid.Column="3" Text="1.0" Width="70" HorizontalAlignment="Left"/>
+                        <TextBlock Grid.Column="4" Text="Normalización:" VerticalAlignment="Center" Margin="5,0"/>
+                        <ComboBox x:Name="cmbRevenue" Grid.Column="5" Width="100" HorizontalAlignment="Left" SelectedIndex="0">
+                            <ComboBoxItem Content="MinMax" Tag="minmax"/>
+                            <ComboBoxItem Content="Z-Score" Tag="zscore"/>
+                            <ComboBoxItem Content="Log" Tag="log"/>
+                        </ComboBox>
                     </Grid>
 
                     <!-- Runtime -->
                     <Grid Margin="0,2">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="30"/>
-                            <ColumnDefinition Width="150"/>
-                            <ColumnDefinition Width="100"/>
+                            <ColumnDefinition Width="120"/>
+                            <ColumnDefinition Width="70"/>
+                            <ColumnDefinition Width="80"/>
+                            <ColumnDefinition Width="130"/>
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
                         <CheckBox x:Name="chkRuntime" Grid.Column="0" IsChecked="True" VerticalAlignment="Center"/>
                         <TextBlock Grid.Column="1" Text="Runtime" VerticalAlignment="Center"/>
                         <TextBlock Grid.Column="2" Text="Peso:" VerticalAlignment="Center" Margin="5,0"/>
-                        <TextBox x:Name="txtRuntime" Grid.Column="3" Text="1.0" Width="80" HorizontalAlignment="Left"/>
+                        <TextBox x:Name="txtRuntime" Grid.Column="3" Text="1.0" Width="70" HorizontalAlignment="Left"/>
+                        <TextBlock Grid.Column="4" Text="Normalización:" VerticalAlignment="Center" Margin="5,0"/>
+                        <ComboBox x:Name="cmbRuntime" Grid.Column="5" Width="100" HorizontalAlignment="Left" SelectedIndex="0">
+                            <ComboBoxItem Content="MinMax" Tag="minmax"/>
+                            <ComboBoxItem Content="Z-Score" Tag="zscore"/>
+                            <ComboBoxItem Content="Log" Tag="log"/>
+                        </ComboBox>
                     </Grid>
 
                     <!-- VoteAverage -->
                     <Grid Margin="0,2">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="30"/>
-                            <ColumnDefinition Width="150"/>
-                            <ColumnDefinition Width="100"/>
+                            <ColumnDefinition Width="120"/>
+                            <ColumnDefinition Width="70"/>
+                            <ColumnDefinition Width="80"/>
+                            <ColumnDefinition Width="130"/>
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
                         <CheckBox x:Name="chkVoteAverage" Grid.Column="0" IsChecked="True" VerticalAlignment="Center"/>
                         <TextBlock Grid.Column="1" Text="Vote Average" VerticalAlignment="Center"/>
                         <TextBlock Grid.Column="2" Text="Peso:" VerticalAlignment="Center" Margin="5,0"/>
-                        <TextBox x:Name="txtVoteAverage" Grid.Column="3" Text="1.0" Width="80" HorizontalAlignment="Left"/>
+                        <TextBox x:Name="txtVoteAverage" Grid.Column="3" Text="1.0" Width="70" HorizontalAlignment="Left"/>
+                        <TextBlock Grid.Column="4" Text="Normalización:" VerticalAlignment="Center" Margin="5,0"/>
+                        <ComboBox x:Name="cmbVoteAverage" Grid.Column="5" Width="100" HorizontalAlignment="Left" SelectedIndex="0">
+                            <ComboBoxItem Content="MinMax" Tag="minmax"/>
+                            <ComboBoxItem Content="Z-Score" Tag="zscore"/>
+                            <ComboBoxItem Content="Log" Tag="log"/>
+                        </ComboBox>
                     </Grid>
 
                     <!-- VoteCount -->
                     <Grid Margin="0,2">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="30"/>
-                            <ColumnDefinition Width="150"/>
-                            <ColumnDefinition Width="100"/>
+                            <ColumnDefinition Width="120"/>
+                            <ColumnDefinition Width="70"/>
+                            <ColumnDefinition Width="80"/>
+                            <ColumnDefinition Width="130"/>
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
                         <CheckBox x:Name="chkVoteCount" Grid.Column="0" IsChecked="True" VerticalAlignment="Center"/>
                         <TextBlock Grid.Column="1" Text="Vote Count" VerticalAlignment="Center"/>
                         <TextBlock Grid.Column="2" Text="Peso:" VerticalAlignment="Center" Margin="5,0"/>
-                        <TextBox x:Name="txtVoteCount" Grid.Column="3" Text="1.0" Width="80" HorizontalAlignment="Left"/>
+                        <TextBox x:Name="txtVoteCount" Grid.Column="3" Text="1.0" Width="70" HorizontalAlignment="Left"/>
+                        <TextBlock Grid.Column="4" Text="Normalización:" VerticalAlignment="Center" Margin="5,0"/>
+                        <ComboBox x:Name="cmbVoteCount" Grid.Column="5" Width="100" HorizontalAlignment="Left" SelectedIndex="0">
+                            <ComboBoxItem Content="MinMax" Tag="minmax"/>
+                            <ComboBoxItem Content="Z-Score" Tag="zscore"/>
+                            <ComboBoxItem Content="Log" Tag="log"/>
+                        </ComboBox>
                     </Grid>
 
                     <!-- ReleaseYear -->
                     <Grid Margin="0,2">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="30"/>
-                            <ColumnDefinition Width="150"/>
-                            <ColumnDefinition Width="100"/>
+                            <ColumnDefinition Width="120"/>
+                            <ColumnDefinition Width="70"/>
+                            <ColumnDefinition Width="80"/>
+                            <ColumnDefinition Width="130"/>
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
                         <CheckBox x:Name="chkReleaseYear" Grid.Column="0" IsChecked="True" VerticalAlignment="Center"/>
                         <TextBlock Grid.Column="1" Text="Release Year" VerticalAlignment="Center"/>
                         <TextBlock Grid.Column="2" Text="Peso:" VerticalAlignment="Center" Margin="5,0"/>
-                        <TextBox x:Name="txtReleaseYear" Grid.Column="3" Text="1.0" Width="80" HorizontalAlignment="Left"/>
+                        <TextBox x:Name="txtReleaseYear" Grid.Column="3" Text="1.0" Width="70" HorizontalAlignment="Left"/>
+                        <TextBlock Grid.Column="4" Text="Normalización:" VerticalAlignment="Center" Margin="5,0"/>
+                        <ComboBox x:Name="cmbReleaseYear" Grid.Column="5" Width="100" HorizontalAlignment="Left" SelectedIndex="0">
+                            <ComboBoxItem Content="MinMax" Tag="minmax"/>
+                            <ComboBoxItem Content="Z-Score" Tag="zscore"/>
+                            <ComboBoxItem Content="Log" Tag="log"/>
+                        </ComboBox>
                     </Grid>
 
                     <!-- Variables categóricas -->

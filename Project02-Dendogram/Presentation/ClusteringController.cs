@@ -43,6 +43,15 @@ namespace Project02_Dendogram.Presentation
         }
 
         /// <summary>
+        /// Actualiza la estrategia de normalización para una variable específica
+        /// </summary>
+        public void UpdateNormalizationStrategy(string featureName, string strategyName)
+        {
+            _model.ConfigurationManager.SetNormalizationStrategyByName(featureName, strategyName);
+            Console.WriteLine($"✓ Normalización de {featureName}: {strategyName}");
+        }
+
+        /// <summary>
         /// Ejecuta todo el proceso de clusterización
         /// </summary>
         public void ExecuteClustering()

@@ -74,7 +74,7 @@ namespace Project02_Dendogram.Presentation
 
         /// <summary>
         /// Maneja el cambio de métrica de distancia
-        /// </summary>|
+        /// </summary>
         private void Metricas_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (_controller == null) return; // evita NRE durante inicialización
@@ -98,6 +98,9 @@ namespace Project02_Dendogram.Presentation
 
                 // Capturar configuración de la UI
                 CaptureVariableConfiguration();
+
+                // Capturar configuración de normalización
+                CaptureNormalizationConfiguration();
 
                 // Ejecutar clusterización a través del controller
                 _controller.ExecuteClustering();
@@ -195,6 +198,61 @@ namespace Project02_Dendogram.Presentation
             _controller.UpdateVariableConfig("languages",
                 chkLanguages.IsChecked == true,
                 ParseWeight(txtLanguages.Text));
+        }
+
+        /// <summary>
+        /// Captura la configuración de normalización desde la UI
+        /// </summary>
+        private void CaptureNormalizationConfiguration()
+        {
+            // Budget
+            if (cmbBudget.SelectedItem is ComboBoxItem budgetItem)
+            {
+                string normalizationType = budgetItem.Tag?.ToString() ?? "minmax";
+                _controller.UpdateNormalizationStrategy("Budget", normalizationType);
+            }
+
+            // Popularity
+            if (cmbPopularity.SelectedItem is ComboBoxItem popularityItem)
+            {
+                string normalizationType = popularityItem.Tag?.ToString() ?? "minmax";
+                _controller.UpdateNormalizationStrategy("Popularity", normalizationType);
+            }
+
+            // Revenue
+            if (cmbRevenue.SelectedItem is ComboBoxItem revenueItem)
+            {
+                string normalizationType = revenueItem.Tag?.ToString() ?? "minmax";
+                _controller.UpdateNormalizationStrategy("Revenue", normalizationType);
+            }
+
+            // Runtime
+            if (cmbRuntime.SelectedItem is ComboBoxItem runtimeItem)
+            {
+                string normalizationType = runtimeItem.Tag?.ToString() ?? "minmax";
+                _controller.UpdateNormalizationStrategy("Runtime", normalizationType);
+            }
+
+            // VoteAverage
+            if (cmbVoteAverage.SelectedItem is ComboBoxItem voteAvgItem)
+            {
+                string normalizationType = voteAvgItem.Tag?.ToString() ?? "minmax";
+                _controller.UpdateNormalizationStrategy("VoteAverage", normalizationType);
+            }
+
+            // VoteCount
+            if (cmbVoteCount.SelectedItem is ComboBoxItem voteCountItem)
+            {
+                string normalizationType = voteCountItem.Tag?.ToString() ?? "minmax";
+                _controller.UpdateNormalizationStrategy("VoteCount", normalizationType);
+            }
+
+            // ReleaseYear
+            if (cmbReleaseYear.SelectedItem is ComboBoxItem releaseYearItem)
+            {
+                string normalizationType = releaseYearItem.Tag?.ToString() ?? "minmax";
+                _controller.UpdateNormalizationStrategy("ReleaseYear", normalizationType);
+            }
         }
 
         /// <summary>
