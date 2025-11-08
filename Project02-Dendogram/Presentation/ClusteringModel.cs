@@ -1,6 +1,7 @@
 ﻿using System;
 using Project02_Dendogram.Models;
 using Project02_Dendogram.Models.DataStructures;
+using Project02_Dendogram.Models.DataStructures.Interfaces;
 using Project02_Dendogram.Services;
 
 namespace Project02_Dendogram.Presentation
@@ -45,6 +46,16 @@ namespace Project02_Dendogram.Presentation
             VectorizationService = null;
             StatusMessage = "Esperando carga de archivo...";
         }
+
+        public void ResetWeigthedVector()
+        {
+            IIterator<Movie> it = Movies.CreateIterator();
+            while (it.HasNext())
+            {
+                Movie movie = it.Next();
+                movie.WeightedFeatureVector = movie.FeatureVector;
+            }
+        }
     }
 
     /// <summary>
@@ -66,7 +77,7 @@ namespace Project02_Dendogram.Presentation
         public VariableSettings Cast { get; set; }
         public VariableSettings Director { get; set; }
         public VariableSettings Keywords { get; set; }
-        public VariableSettings ProductionCountries { get; set; }
+        public VariableSettings ProductionCompanies { get; set; }
         public VariableSettings SpokenLanguages { get; set; }
 
         public VariableConfiguration()
@@ -85,7 +96,7 @@ namespace Project02_Dendogram.Presentation
             Cast = new VariableSettings { IsEnabled = true, Weight = 1.0 };
             Director = new VariableSettings { IsEnabled = true, Weight = 1.0 };
             Keywords = new VariableSettings { IsEnabled = true, Weight = 1.0 };
-            ProductionCountries = new VariableSettings { IsEnabled = true, Weight = 1.0 };
+            ProductionCompanies = new VariableSettings { IsEnabled = true, Weight = 1.0 };
             SpokenLanguages = new VariableSettings { IsEnabled = true, Weight = 1.0 };
         }
     }

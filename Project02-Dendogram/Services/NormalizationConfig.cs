@@ -52,14 +52,11 @@ namespace Project02_Dendogram.Strategies.Normalization
 
         public void Normalize(CustomList<Movie> movies)
         {
-            Console.WriteLine("\n📊 Calculando estadísticas para normalización...");
             for (int i = 0; i < 7; i++)
             {
                 strategies[i].CalculateStats(movies, i);
-                Console.WriteLine($"  ✓ {numericFeatureNames[i]}: {strategies[i].GetType().Name}");
             }
 
-            Console.WriteLine("\n🔄 Aplicando normalización...");
             var iterator = movies.CreateIterator();
             while (iterator.HasNext())
             {
@@ -71,17 +68,6 @@ namespace Project02_Dendogram.Strategies.Normalization
                     double normalizedValue = strategies[i].Normalize(originalValue);
                     movie.WeightedFeatureVector.SetAt(i, normalizedValue);
                 }
-            }
-
-            Console.WriteLine("  ✓ Normalización completada");
-        }
-
-        public void PrintConfiguration()
-        {
-            Console.WriteLine("\n📋 Configuración de Normalización:");
-            for (int i = 0; i < 7; i++)
-            {
-                Console.WriteLine($"  {numericFeatureNames[i],-15} → {strategies[i].GetType().Name}");
             }
         }
     }

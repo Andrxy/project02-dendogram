@@ -33,9 +33,9 @@ namespace Project02_Dendogram.Services
             // --- Categóricas ---
             vector.Append(CreateOneHot(movie.Genres, _indexer.GenreIndex));
             vector.Append(CreateOneHot(movie.Cast, _indexer.CastIndex));
-            vector.Append(CreateOneHot(new string[] { movie.Director }, _indexer.DirectorIndex));
+            vector.Append(CreateOneHot(movie.Directors, _indexer.DirectorIndex));
             vector.Append(CreateOneHot(movie.Keywords, _indexer.KeywordsIndex));
-            vector.Append(CreateOneHot(movie.ProductionCountries, _indexer.ProductionCountriesIndex));
+            vector.Append(CreateOneHot(movie.ProductionCompanies, _indexer.ProductionCompaniesIndex));
             vector.Append(CreateOneHot(movie.SpokenLanguages, _indexer.SpokenLanguagesIndex));
 
             return vector;

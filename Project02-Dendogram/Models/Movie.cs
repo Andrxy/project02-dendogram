@@ -21,9 +21,9 @@ namespace Project02_Dendogram.Models
         // Variables Categoricas
         public string[] Genres { get; set; }
         public string[] Cast { get; set; }
-        public string Director { get; set; }
+        public string[] Directors { get; set; }
         public string[] Keywords { get; set; }
-        public string[] ProductionCountries { get; set; }
+        public string[] ProductionCompanies { get; set; }
         public string[] SpokenLanguages { get; set; }
         public CustomVector<double> FeatureVector { get; set; }
         public CustomVector<double> WeightedFeatureVector { get; set; }
@@ -32,20 +32,6 @@ namespace Project02_Dendogram.Models
         {
             FeatureVector = new CustomVector<double>();
             WeightedFeatureVector = new CustomVector<double>();
-        }
-
-        public override string ToString()
-        {
-            string safeJoin(string[] arr) => arr == null ? "" : string.Join(" | ", arr);
-
-            return $"Movie: {Title} ({ReleaseYear})\n" +
-                   $"Index: {Index}, Budget: {Budget}, Revenue: {Revenue}, Runtime: {Runtime}, Popularity: {Popularity}, VoteAverage: {VoteAverage}, VoteCount: {VoteCount}\n" +
-                   $"Genres: {safeJoin(Genres)}\n" +
-                   $"Cast: {safeJoin(Cast)}\n" +
-                   $"Director: {Director}\n" +
-                   $"Keywords: {safeJoin(Keywords)}\n" +
-                   $"ProductionCountries: {safeJoin(ProductionCountries)}\n" +
-                   $"SpokenLanguages: {safeJoin(SpokenLanguages)}";
         }
     }
 }

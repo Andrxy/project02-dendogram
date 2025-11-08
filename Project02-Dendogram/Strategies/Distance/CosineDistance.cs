@@ -16,7 +16,7 @@ namespace Project02_Dendogram.Strategies.Distance
             double norm1 = VectorOperations.Norm(v1);
             double norm2 = VectorOperations.Norm(v2);
 
-            return 1 - dotProduct / norm1 * norm2; 
+            return 1 - dotProduct / (norm1 * norm2); 
         }
     }
 }

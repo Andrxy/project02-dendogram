@@ -30,8 +30,6 @@ namespace Project02_Dendogram.Services
                     vector.SetAt(i, value * weight);
                 }
             }
-
-            Console.WriteLine($"  Total procesado: películas");
         }
     }
 }

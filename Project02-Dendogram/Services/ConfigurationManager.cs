@@ -34,15 +34,12 @@ namespace Project02_Dendogram.Services
 
         public void InitializeWeightsForDataset(VectorizationService vectorizer)
         {
-            AddWeights(vectorizer.Indexer.GenreIndex.Count, 15.0);
+            AddWeights(vectorizer.Indexer.GenreIndex.Count, 1.0);
             AddWeights(vectorizer.Indexer.CastIndex.Count, 1.0);
             AddWeights(vectorizer.Indexer.DirectorIndex.Count, 1.0);
             AddWeights(vectorizer.Indexer.KeywordsIndex.Count, 1.0);
-            AddWeights(vectorizer.Indexer.ProductionCountriesIndex.Count, 1.0);
+            AddWeights(vectorizer.Indexer.ProductionCompaniesIndex.Count, 1.0);
             AddWeights(vectorizer.Indexer.SpokenLanguagesIndex.Count, 1.0);
-
-            Console.WriteLine($"\n⚙️ Configuración de pesos inicializada:");
-            Console.WriteLine($"  Total features: {Weights.Count}");
         }
 
         private void AddWeights(int count, double weight)
@@ -69,12 +66,6 @@ namespace Project02_Dendogram.Services
         public void SetDistanceMetric(string name)
         {
             DistanceStrategy = DistanceFactory.CreateDistance(name);
-        }
-
-        public void PrintConfiguration()
-        {
-            NormalizationConfig.PrintConfiguration();
-            Console.WriteLine($"\n📏 Métrica de distancia: {DistanceStrategy.GetType().Name}");
         }
     }
 }

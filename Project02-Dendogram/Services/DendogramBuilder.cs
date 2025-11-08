@@ -109,25 +109,5 @@ namespace Project02_Dendogram.Services
 
             return sum / count;
         }
-
-
-        // ------------------------------------------------------------
-        // Imprimir dendrograma (opcional)
-        // ------------------------------------------------------------
-        public void PrintDendrogram(Cluster node, string indent = "")
-        {
-            if (node == null) return;
-
-            if (node.IsLeaf)
-            {
-                Console.WriteLine($"{indent}- {node.Movie.Title}");
-            }
-            else
-            {
-                Console.WriteLine($"{indent}+ Merge (distancia: {node.Distance:0.00})");
-                PrintDendrogram(node.Left, indent + "  ");
-                PrintDendrogram(node.Right, indent + "  ");
-            }
-        }
     }
 }

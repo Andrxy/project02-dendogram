@@ -48,7 +48,6 @@ namespace Project02_Dendogram.Presentation
         public void UpdateNormalizationStrategy(string featureName, string strategyName)
         {
             _model.ConfigurationManager.SetNormalizationStrategyByName(featureName, strategyName);
-            Console.WriteLine($"✓ Normalización de {featureName}: {strategyName}");
         }
 
         /// <summary>
@@ -89,9 +88,6 @@ namespace Project02_Dendogram.Presentation
             _model.DendrogramRoot = builder.BuildDendogram(_model.Movies);
             _model.StatusMessage = "Dendrograma construido exitosamente";
 
-            // 7. Imprimir dendrograma en consola
-            PrintDendrogram(_model.DendrogramRoot, "");
-
             JSONExporter exporter = new JSONExporter();
             exporter.ExportToFile(_model.DendrogramRoot);
 
@@ -102,6 +98,7 @@ namespace Project02_Dendogram.Presentation
                 System.Windows.MessageBoxButton.OK,
                 System.Windows.MessageBoxImage.Information
             );
+
         }
 
         /// <summary>
@@ -155,8 +152,8 @@ namespace Project02_Dendogram.Presentation
             );
 
             currentIndex = ApplyCategoricalWeight(
-                config.ProductionCountries,
-                _model.VectorizationService.Indexer.ProductionCountriesIndex.Count,
+                config.ProductionCompanies,
+                _model.VectorizationService.Indexer.ProductionCompaniesIndex.Count,
                 currentIndex
             );
 
@@ -165,8 +162,6 @@ namespace Project02_Dendogram.Presentation
                 _model.VectorizationService.Indexer.SpokenLanguagesIndex.Count,
                 currentIndex
             );
-
-            Console.WriteLine($"\n⚙️ Configuración de pesos aplicada. Total features: {currentIndex}");
         }
 
         /// <summary>
@@ -246,8 +241,8 @@ namespace Project02_Dendogram.Presentation
                     config.Keywords.Weight = weight;
                     break;
                 case "countries":
-                    config.ProductionCountries.IsEnabled = isEnabled;
-                    config.ProductionCountries.Weight = weight;
+                    config.ProductionCompanies.IsEnabled = isEnabled;
+                    config.ProductionCompanies.Weight = weight;
                     break;
                 case "languages":
                     config.SpokenLanguages.IsEnabled = isEnabled;
@@ -271,25 +266,6 @@ namespace Project02_Dendogram.Presentation
                 moviesList.Add(iterator.Next());
             }
             return moviesList;
-        }
-
-        /// <summary>
-        /// Imprime el dendrograma en consola
-        /// </summary>
-        private void PrintDendrogram(Cluster node, string indent)
-        {
-            if (node == null) return;
-
-            if (node.IsLeaf)
-            {
-                Console.WriteLine($"{indent}- {node.Movie.Title}");
-            }
-            else
-            {
-                Console.WriteLine($"{indent}+ Merge (distancia: {node.Distance:0.00})");
-                PrintDendrogram(node.Left, indent + "  ");
-                PrintDendrogram(node.Right, indent + "  ");
-            }
         }
 
         private string GetDendrogramString(Cluster node, string indent = "")
