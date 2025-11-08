@@ -1,8 +1,8 @@
 ﻿using System;
 using Project02_Dendogram.Models;
 using Project02_Dendogram.Models.DataStructures;
-using Project02_Dendogram.Strategies.Distance;
 using Project02_Dendogram.Models.DataStructures.Interfaces;
+using Project02_Dendogram.Strategies.Distance;
 
 namespace Project02_Dendogram.Services
 {
@@ -17,15 +17,17 @@ namespace Project02_Dendogram.Services
 
         public Cluster BuildDendogram(CustomList<Movie> movies)
         {
-            // Inicializar clusters hoja
+            // Crear clusters hoja
             CustomList<Cluster> clusters = new CustomList<Cluster>();
             IIterator<Movie> it = movies.CreateIterator();
+
             while (it.HasNext())
             {
-                clusters.Add(new Cluster(it.Next()));
+                Movie m = it.Next();
+                clusters.Add(new Cluster(m));   // hoja con Movie y Movies.Add(m)
             }
 
-            // Clustering jerárquico
+            // Ciclo principal del clustering jerárquico
             while (clusters.Count > 1)
             {
                 double minDistance = double.MaxValue;
@@ -33,14 +35,15 @@ namespace Project02_Dendogram.Services
                 int m = clusters.Count;
 
                 // Buscar los dos clusters más cercanos
-                for (int i = 0; i < m; ++i)
+                for (int i = 0; i < m; i++)
                 {
-                    for (int j = i + 1; j < m; ++j)
+                    for (int j = i + 1; j < m; j++)
                     {
-                        CustomVector<double> vecI = GetClusterVector(clusters.GetAt(i));
-                        CustomVector<double> vecJ = GetClusterVector(clusters.GetAt(j));
+                        double d = AverageLinkageDistance(
+                            clusters.GetAt(i),
+                            clusters.GetAt(j)
+                        );
 
-                        double d = distanceStrategy.Calculate(vecI, vecJ);
                         if (d < minDistance)
                         {
                             minDistance = d;
@@ -50,10 +53,14 @@ namespace Project02_Dendogram.Services
                     }
                 }
 
-                // Crear nuevo cluster
-                Cluster merged = new Cluster(clusters.GetAt(iMin), clusters.GetAt(jMin), minDistance);
+                // Crear el nuevo cluster fusionado
+                Cluster merged = new Cluster(
+                    clusters.GetAt(iMin),
+                    clusters.GetAt(jMin),
+                    minDistance
+                );
 
-                // Remover correctamente (el índice mayor primero)
+                // Remover adecuadamente (mayor índice primero)
                 if (iMin > jMin)
                 {
                     clusters.RemoveAt(iMin);
@@ -71,20 +78,56 @@ namespace Project02_Dendogram.Services
             return clusters.GetAt(0);
         }
 
-        // Obtiene un vector representativo de un cluster
-        private CustomVector<double> GetClusterVector(Cluster cluster)
+        // ------------------------------------------------------------
+        // AVERAGE LINKAGE REAL
+        // ------------------------------------------------------------
+        private double AverageLinkageDistance(Cluster A, Cluster B)
         {
-            if (cluster.IsLeaf)
-                return cluster.Movie.WeightedFeatureVector;
+            double sum = 0.0;
+            int count = 0;
 
-            CustomVector<double> left = GetClusterVector(cluster.Left);
-            CustomVector<double> right = GetClusterVector(cluster.Right);
+            // Iterator for A.Movies
+            IIterator<Movie> itA = A.Movies.CreateIterator();
+            while (itA.HasNext())
+            {
+                Movie x = itA.Next();
 
-            CustomVector<double> merged = new CustomVector<double>(left.Count);
-            for (int i = 0; i < left.Count; i++)
-                merged.Add((left.GetAt(i) + right.GetAt(i)) / 2.0);
+                // Iterator for B.Movies
+                IIterator<Movie> itB = B.Movies.CreateIterator();
+                while (itB.HasNext())
+                {
+                    Movie y = itB.Next();
 
-            return merged;
+                    sum += distanceStrategy.Calculate(
+                        x.WeightedFeatureVector,
+                        y.WeightedFeatureVector
+                    );
+
+                    count++;
+                }
+            }
+
+            return sum / count;
+        }
+
+
+        // ------------------------------------------------------------
+        // Imprimir dendrograma (opcional)
+        // ------------------------------------------------------------
+        public void PrintDendrogram(Cluster node, string indent = "")
+        {
+            if (node == null) return;
+
+            if (node.IsLeaf)
+            {
+                Console.WriteLine($"{indent}- {node.Movie.Title}");
+            }
+            else
+            {
+                Console.WriteLine($"{indent}+ Merge (distancia: {node.Distance:0.00})");
+                PrintDendrogram(node.Left, indent + "  ");
+                PrintDendrogram(node.Right, indent + "  ");
+            }
         }
     }
 }

@@ -19,6 +19,8 @@ namespace Project02_Dendogram.Strategies.Distance
                     return new CosineDistance();
                 case "manhattan":
                     return new ManhattanDistance();
+                case "hamming":
+                    return new HammingDistance();
                 default:
                     throw new ArgumentException("Tipo de normalizacion invalida");
             }

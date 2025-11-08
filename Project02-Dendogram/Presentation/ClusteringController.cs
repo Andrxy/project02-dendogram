@@ -91,6 +91,17 @@ namespace Project02_Dendogram.Presentation
 
             // 7. Imprimir dendrograma en consola
             PrintDendrogram(_model.DendrogramRoot, "");
+
+            JSONExporter exporter = new JSONExporter();
+            exporter.ExportToFile(_model.DendrogramRoot);
+
+            string dendrogramText = GetDendrogramString(_model.DendrogramRoot);
+            System.Windows.MessageBox.Show(
+                dendrogramText,
+                "Dendrograma Generado",
+                System.Windows.MessageBoxButton.OK,
+                System.Windows.MessageBoxImage.Information
+            );
         }
 
         /// <summary>
@@ -280,5 +291,27 @@ namespace Project02_Dendogram.Presentation
                 PrintDendrogram(node.Right, indent + "  ");
             }
         }
+
+        private string GetDendrogramString(Cluster node, string indent = "")
+        {
+            if (node == null)
+                return string.Empty;
+
+            string result = "";
+
+            if (node.IsLeaf)
+            {
+                result += $"{indent}- {node.Movie.Title}\n";
+            }
+            else
+            {
+                result += $"{indent}+ Merge (distancia: {node.Distance:0.00})\n";
+                result += GetDendrogramString(node.Left, indent + "  ");
+                result += GetDendrogramString(node.Right, indent + "  ");
+            }
+
+            return result;
+        }
+
     }
 }

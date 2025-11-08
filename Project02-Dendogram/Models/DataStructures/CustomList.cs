@@ -83,6 +83,15 @@ namespace Project02_Dendogram.Models.DataStructures
             _size--;
         }
 
+        public void Add(CustomList<T> list)
+        {
+            IIterator<T> it = list.CreateIterator();
+            while (it.HasNext())
+            {
+                T item = it.Next();
+                Add(item);
+            }
+        }
 
 
         public IIterator<T> CreateIterator()
