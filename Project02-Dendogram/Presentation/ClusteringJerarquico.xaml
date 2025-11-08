@@ -5,18 +5,264 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Project02_Dendogram.Presentation"
         mc:Ignorable="d"
-        Title="ClusteringJerarquico" Height="450" Width="800">
-    <Grid>
-        <Button Content="Button" HorizontalAlignment="Left" Margin="665,10,0,0" VerticalAlignment="Top" Width="90"/>
-        <Button x:Name="CargarJSON" Content="Cargar Archivo .Json" HorizontalAlignment="Left" Margin="10,61,0,0" VerticalAlignment="Top" Width="144" Height="46" Click="CargarJSON_Click"/>
-        <Border BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Center" Height="53" Margin="0,138,0,0" VerticalAlignment="Top" Width="780" RenderTransformOrigin="0.832,2.035">
-            <ComboBox x:Name="Metricas" HorizontalAlignment="Center" Height="53" VerticalAlignment="Center" Width="780" SelectionChanged="Metricas_SelectionChanged"/>
-        </Border>
-        <Label Content="Métrica de Distancia" HorizontalAlignment="Left" Margin="10,112,0,0" VerticalAlignment="Top" Width="276"/>
-        <Label Content="Configuración de variables" HorizontalAlignment="Left" Margin="10,0,0,0" VerticalAlignment="Center" Width="276"/>
-        <Label x:Name="NombreArchivo" Content="" HorizontalAlignment="Left" Margin="154,67,0,0" VerticalAlignment="Top" Width="203"/>
-        <Button x:Name="CargarCSV" Content="Cargar CSV" HorizontalAlignment="Left" Margin="560,10,0,0" VerticalAlignment="Top" Width="93" Height="20" Click="CargarCSV_Click"/>
-        <DataGrid x:Name="Tabla1" SelectionChanged="DataGrid_SelectionChanged" Margin="17,235,17,27"/>
+        Title="Clustering Jerárquico" Height="700" Width="900">
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
 
+        <!-- Sección de Carga de Archivos -->
+        <GroupBox Grid.Row="0" Header="Cargar Datos" Margin="0,0,0,10">
+            <StackPanel Orientation="Horizontal" Margin="5">
+                <Button x:Name="CargarCSV" Content="Cargar Archivo .TSV" 
+                        Width="150" Height="35" Margin="0,0,10,0" 
+                        Click="CargarCSV_Click"/>
+                <Label x:Name="NombreArchivo" Content="Ningún archivo cargado" 
+                       VerticalAlignment="Center" Foreground="Gray"/>
+            </StackPanel>
+        </GroupBox>
+
+        <!-- Sección de Métrica de Distancia -->
+        <GroupBox Grid.Row="1" Header="Métrica de Distancia" Margin="0,0,0,10">
+            <StackPanel Margin="5">
+                <ComboBox x:Name="Metricas" Height="35" 
+                          SelectionChanged="Metricas_SelectionChanged">
+                    <ComboBoxItem Content="Euclidiana" Tag="euclidean" IsSelected="True"/>
+                    <ComboBoxItem Content="Manhattan" Tag="manhattan"/>
+                    <ComboBoxItem Content="Coseno" Tag="cosine"/>
+                </ComboBox>
+            </StackPanel>
+        </GroupBox>
+
+        <!-- Sección de Configuración de Variables -->
+        <GroupBox Grid.Row="2" Header="Configuración de Variables" Margin="0,0,0,10">
+            <ScrollViewer MaxHeight="200" VerticalScrollBarVisibility="Auto">
+                <StackPanel x:Name="VariablesPanel" Margin="5">
+                    <!-- Variables numéricas -->
+                    <TextBlock Text="Variables Numéricas:" FontWeight="Bold" Margin="0,0,0,5"/>
+
+                    <!-- Budget -->
+                    <Grid Margin="0,2">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="30"/>
+                            <ColumnDefinition Width="150"/>
+                            <ColumnDefinition Width="100"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <CheckBox x:Name="chkBudget" Grid.Column="0" IsChecked="True" VerticalAlignment="Center"/>
+                        <TextBlock Grid.Column="1" Text="Budget" VerticalAlignment="Center"/>
+                        <TextBlock Grid.Column="2" Text="Peso:" VerticalAlignment="Center" Margin="5,0"/>
+                        <TextBox x:Name="txtBudget" Grid.Column="3" Text="1.0" Width="80" HorizontalAlignment="Left"/>
+                    </Grid>
+
+                    <!-- Popularity -->
+                    <Grid Margin="0,2">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="30"/>
+                            <ColumnDefinition Width="150"/>
+                            <ColumnDefinition Width="100"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <CheckBox x:Name="chkPopularity" Grid.Column="0" IsChecked="True" VerticalAlignment="Center"/>
+                        <TextBlock Grid.Column="1" Text="Popularity" VerticalAlignment="Center"/>
+                        <TextBlock Grid.Column="2" Text="Peso:" VerticalAlignment="Center" Margin="5,0"/>
+                        <TextBox x:Name="txtPopularity" Grid.Column="3" Text="1.0" Width="80" HorizontalAlignment="Left"/>
+                    </Grid>
+
+                    <!-- Revenue -->
+                    <Grid Margin="0,2">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="30"/>
+                            <ColumnDefinition Width="150"/>
+                            <ColumnDefinition Width="100"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <CheckBox x:Name="chkRevenue" Grid.Column="0" IsChecked="True" VerticalAlignment="Center"/>
+                        <TextBlock Grid.Column="1" Text="Revenue" VerticalAlignment="Center"/>
+                        <TextBlock Grid.Column="2" Text="Peso:" VerticalAlignment="Center" Margin="5,0"/>
+                        <TextBox x:Name="txtRevenue" Grid.Column="3" Text="1.0" Width="80" HorizontalAlignment="Left"/>
+                    </Grid>
+
+                    <!-- Runtime -->
+                    <Grid Margin="0,2">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="30"/>
+                            <ColumnDefinition Width="150"/>
+                            <ColumnDefinition Width="100"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <CheckBox x:Name="chkRuntime" Grid.Column="0" IsChecked="True" VerticalAlignment="Center"/>
+                        <TextBlock Grid.Column="1" Text="Runtime" VerticalAlignment="Center"/>
+                        <TextBlock Grid.Column="2" Text="Peso:" VerticalAlignment="Center" Margin="5,0"/>
+                        <TextBox x:Name="txtRuntime" Grid.Column="3" Text="1.0" Width="80" HorizontalAlignment="Left"/>
+                    </Grid>
+
+                    <!-- VoteAverage -->
+                    <Grid Margin="0,2">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="30"/>
+                            <ColumnDefinition Width="150"/>
+                            <ColumnDefinition Width="100"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <CheckBox x:Name="chkVoteAverage" Grid.Column="0" IsChecked="True" VerticalAlignment="Center"/>
+                        <TextBlock Grid.Column="1" Text="Vote Average" VerticalAlignment="Center"/>
+                        <TextBlock Grid.Column="2" Text="Peso:" VerticalAlignment="Center" Margin="5,0"/>
+                        <TextBox x:Name="txtVoteAverage" Grid.Column="3" Text="1.0" Width="80" HorizontalAlignment="Left"/>
+                    </Grid>
+
+                    <!-- VoteCount -->
+                    <Grid Margin="0,2">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="30"/>
+                            <ColumnDefinition Width="150"/>
+                            <ColumnDefinition Width="100"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <CheckBox x:Name="chkVoteCount" Grid.Column="0" IsChecked="True" VerticalAlignment="Center"/>
+                        <TextBlock Grid.Column="1" Text="Vote Count" VerticalAlignment="Center"/>
+                        <TextBlock Grid.Column="2" Text="Peso:" VerticalAlignment="Center" Margin="5,0"/>
+                        <TextBox x:Name="txtVoteCount" Grid.Column="3" Text="1.0" Width="80" HorizontalAlignment="Left"/>
+                    </Grid>
+
+                    <!-- ReleaseYear -->
+                    <Grid Margin="0,2">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="30"/>
+                            <ColumnDefinition Width="150"/>
+                            <ColumnDefinition Width="100"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <CheckBox x:Name="chkReleaseYear" Grid.Column="0" IsChecked="True" VerticalAlignment="Center"/>
+                        <TextBlock Grid.Column="1" Text="Release Year" VerticalAlignment="Center"/>
+                        <TextBlock Grid.Column="2" Text="Peso:" VerticalAlignment="Center" Margin="5,0"/>
+                        <TextBox x:Name="txtReleaseYear" Grid.Column="3" Text="1.0" Width="80" HorizontalAlignment="Left"/>
+                    </Grid>
+
+                    <!-- Variables categóricas -->
+                    <TextBlock Text="Variables Categóricas:" FontWeight="Bold" Margin="0,10,0,5"/>
+
+                    <!-- Genres -->
+                    <Grid Margin="0,2">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="30"/>
+                            <ColumnDefinition Width="150"/>
+                            <ColumnDefinition Width="100"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <CheckBox x:Name="chkGenres" Grid.Column="0" IsChecked="True" VerticalAlignment="Center"/>
+                        <TextBlock Grid.Column="1" Text="Géneros" VerticalAlignment="Center"/>
+                        <TextBlock Grid.Column="2" Text="Peso:" VerticalAlignment="Center" Margin="5,0"/>
+                        <TextBox x:Name="txtGenres" Grid.Column="3" Text="15.0" Width="80" HorizontalAlignment="Left"/>
+                    </Grid>
+
+                    <!-- Cast -->
+                    <Grid Margin="0,2">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="30"/>
+                            <ColumnDefinition Width="150"/>
+                            <ColumnDefinition Width="100"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <CheckBox x:Name="chkCast" Grid.Column="0" IsChecked="True" VerticalAlignment="Center"/>
+                        <TextBlock Grid.Column="1" Text="Reparto" VerticalAlignment="Center"/>
+                        <TextBlock Grid.Column="2" Text="Peso:" VerticalAlignment="Center" Margin="5,0"/>
+                        <TextBox x:Name="txtCast" Grid.Column="3" Text="1.0" Width="80" HorizontalAlignment="Left"/>
+                    </Grid>
+
+                    <!-- Director -->
+                    <Grid Margin="0,2">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="30"/>
+                            <ColumnDefinition Width="150"/>
+                            <ColumnDefinition Width="100"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <CheckBox x:Name="chkDirector" Grid.Column="0" IsChecked="True" VerticalAlignment="Center"/>
+                        <TextBlock Grid.Column="1" Text="Director" VerticalAlignment="Center"/>
+                        <TextBlock Grid.Column="2" Text="Peso:" VerticalAlignment="Center" Margin="5,0"/>
+                        <TextBox x:Name="txtDirector" Grid.Column="3" Text="1.0" Width="80" HorizontalAlignment="Left"/>
+                    </Grid>
+
+                    <!-- Keywords -->
+                    <Grid Margin="0,2">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="30"/>
+                            <ColumnDefinition Width="150"/>
+                            <ColumnDefinition Width="100"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <CheckBox x:Name="chkKeywords" Grid.Column="0" IsChecked="True" VerticalAlignment="Center"/>
+                        <TextBlock Grid.Column="1" Text="Palabras Clave" VerticalAlignment="Center"/>
+                        <TextBlock Grid.Column="2" Text="Peso:" VerticalAlignment="Center" Margin="5,0"/>
+                        <TextBox x:Name="txtKeywords" Grid.Column="3" Text="1.0" Width="80" HorizontalAlignment="Left"/>
+                    </Grid>
+
+                    <!-- Production Countries -->
+                    <Grid Margin="0,2">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="30"/>
+                            <ColumnDefinition Width="150"/>
+                            <ColumnDefinition Width="100"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <CheckBox x:Name="chkCountries" Grid.Column="0" IsChecked="True" VerticalAlignment="Center"/>
+                        <TextBlock Grid.Column="1" Text="Países Producción" VerticalAlignment="Center"/>
+                        <TextBlock Grid.Column="2" Text="Peso:" VerticalAlignment="Center" Margin="5,0"/>
+                        <TextBox x:Name="txtCountries" Grid.Column="3" Text="1.0" Width="80" HorizontalAlignment="Left"/>
+                    </Grid>
+
+                    <!-- Spoken Languages -->
+                    <Grid Margin="0,2">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="30"/>
+                            <ColumnDefinition Width="150"/>
+                            <ColumnDefinition Width="100"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <CheckBox x:Name="chkLanguages" Grid.Column="0" IsChecked="True" VerticalAlignment="Center"/>
+                        <TextBlock Grid.Column="1" Text="Idiomas" VerticalAlignment="Center"/>
+                        <TextBlock Grid.Column="2" Text="Peso:" VerticalAlignment="Center" Margin="5,0"/>
+                        <TextBox x:Name="txtLanguages" Grid.Column="3" Text="1.0" Width="80" HorizontalAlignment="Left"/>
+                    </Grid>
+                </StackPanel>
+            </ScrollViewer>
+        </GroupBox>
+
+        <!-- Botón de Clusterización -->
+        <GroupBox Grid.Row="3" Header="Acción" Margin="0,0,0,10">
+            <StackPanel Margin="5">
+                <Button x:Name="CargarJSON" Content="Ejecutar Clusterización" 
+                        Width="200" Height="40" 
+                        Click="CargarJSON_Click"
+                        IsEnabled="False"/>
+            </StackPanel>
+        </GroupBox>
+
+        <!-- Tabla de Resultados -->
+        <GroupBox Grid.Row="4" Header="Resultados" Margin="0,0,0,10">
+            <DataGrid x:Name="Tabla1" 
+                      AutoGenerateColumns="False"
+                      IsReadOnly="True"
+                      SelectionChanged="DataGrid_SelectionChanged">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Título" Binding="{Binding Title}" Width="*"/>
+                    <DataGridTextColumn Header="Año" Binding="{Binding ReleaseYear}" Width="80"/>
+                    <DataGridTextColumn Header="Director" Binding="{Binding Director}" Width="150"/>
+                </DataGrid.Columns>
+            </DataGrid>
+        </GroupBox>
+
+        <!-- Barra de Estado -->
+        <StatusBar Grid.Row="5">
+            <StatusBarItem>
+                <TextBlock x:Name="StatusText" Text="Listo"/>
+            </StatusBarItem>
+        </StatusBar>
     </Grid>
 </Window>

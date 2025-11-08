@@ -1,6 +1,7 @@
 ﻿using Project02_Dendogram.Models.DataStructures;
 using Project02_Dendogram.Strategies.Normalization;
 using Project02_Dendogram.Strategies.Distance;
+using System;
 
 namespace Project02_Dendogram.Services
 {

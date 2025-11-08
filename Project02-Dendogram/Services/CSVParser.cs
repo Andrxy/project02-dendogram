@@ -1,12 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using System.Windows.Controls;
 using Project02_Dendogram.Models;
 using Project02_Dendogram.Models.DataStructures;
 
@@ -14,17 +8,41 @@ namespace Project02_Dendogram.Services
 {
     internal class CSVParser
     {
-        private readonly string _filePath = @"../../../Resources/test30.tsv";
+        private readonly string _filePath;
+
+        // Constructor que acepta una ruta personalizada
+        public CSVParser(string filePath = null)
+        {
+            _filePath = filePath ?? @"../../../Resources/test30.tsv";
+        }
+
         public CustomList<Movie> ParseMovies()
         {
             CustomList<Movie> movies = new CustomList<Movie>();
 
-            string[] lines = System.IO.File.ReadAllLines(_filePath);
+            if (!File.Exists(_filePath))
+            {
+                throw new FileNotFoundException($"Archivo no encontrado: {_filePath}");
+            }
+
+            string[] lines = File.ReadAllLines(_filePath);
+
+            if (lines.Length <= 1)
+            {
+                throw new InvalidOperationException("El archivo está vacío o solo contiene encabezados");
+            }
 
             for (int i = 1; i < lines.Length; ++i)
             {
-                Movie movie = ParseLine(lines[i]);
-                movies.Add(movie);
+                try
+                {
+                    Movie movie = ParseLine(lines[i]);
+                    movies.Add(movie);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"⚠️ Error parseando línea {i}: {ex.Message}");
+                }
             }
 
             return movies;
@@ -53,12 +71,12 @@ namespace Project02_Dendogram.Services
 
             return movie;
         }
+
         private double ParseDouble(string value)
         {
             if (string.IsNullOrWhiteSpace(value))
                 return 0;
 
-            // Reemplazar puntos por comas si es necesario (según cultura)
             value = value.Replace('.', ',');
 
             if (double.TryParse(value, out double result))
@@ -72,9 +90,7 @@ namespace Project02_Dendogram.Services
             if (string.IsNullOrWhiteSpace(value))
                 return 0;
 
-            // Eliminar espacios y caracteres no numéricos si es necesario
-            value = value.Trim();
-            value.Replace(".", "");
+            value = value.Trim().Replace(".", "");
 
             if (long.TryParse(value, out long result))
                 return result;
@@ -87,12 +103,14 @@ namespace Project02_Dendogram.Services
             if (DateTime.TryParse(value, out DateTime date))
                 return date.Year;
 
-            // Valor por defecto si está vacío o inválido
             return 0;
         }
 
         private string[] ParseStringArray(string value)
         {
+            if (string.IsNullOrWhiteSpace(value))
+                return Array.Empty<string>();
+
             string[] split = value.Split(' ');
             return split;
         }
@@ -102,13 +120,11 @@ namespace Project02_Dendogram.Services
             if (string.IsNullOrWhiteSpace(value))
                 return Array.Empty<string>();
 
-            // Quitar corchetes externos
             string trimmed = value.Trim('[', ']');
 
             if (string.IsNullOrWhiteSpace(trimmed))
                 return Array.Empty<string>();
 
-            // Separar por "}, {" y reconstruir las llaves faltantes
             string[] objects = trimmed
                 .Split(new string[] { "}, {" }, StringSplitOptions.RemoveEmptyEntries)
                 .Select(s => s.StartsWith("{") ? s : "{" + s)
@@ -117,6 +133,5 @@ namespace Project02_Dendogram.Services
 
             return objects;
         }
-
     }
 }
