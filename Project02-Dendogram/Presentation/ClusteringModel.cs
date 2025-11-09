@@ -6,9 +6,7 @@ using Project02_Dendogram.Services;
 
 namespace Project02_Dendogram.Presentation
 {
-    /// <summary>
-    /// Modelo que contiene todos los datos y estado de la aplicación
-    /// </summary>
+   //Aqui estan declaradas las variables que usa el View
     internal class ClusteringModel
     {
         // Datos principales
@@ -16,7 +14,7 @@ namespace Project02_Dendogram.Presentation
         public Cluster DendrogramRoot { get; set; }
         public string LoadedFilePath { get; set; }
 
-        // Servicios
+        
         public VectorizationService VectorizationService { get; set; }
         public ConfigurationManager ConfigurationManager { get; private set; }
 
@@ -35,9 +33,9 @@ namespace Project02_Dendogram.Presentation
             StatusMessage = "Esperando carga de archivo...";
         }
 
-        /// <summary>
-        /// Reinicia el modelo a su estado inicial
-        /// </summary>
+        
+        // Reinicia el modelo a su estado inicial
+        
         public void Reset()
         {
             Movies = null;
@@ -58,9 +56,9 @@ namespace Project02_Dendogram.Presentation
         }
     }
 
-    /// <summary>
-    /// Configuración de variables numéricas y categóricas
-    /// </summary>
+   
+    // Configuración de variables numéricas y categóricas
+    
     internal class VariableConfiguration
     {
         // Variables numéricas
@@ -82,7 +80,7 @@ namespace Project02_Dendogram.Presentation
 
         public VariableConfiguration()
         {
-            // Inicializar variables numéricas con peso 1.0
+            // Inicializar variables
             Budget = new VariableSettings { IsEnabled = true, Weight = 1.0 };
             Popularity = new VariableSettings { IsEnabled = true, Weight = 1.0 };
             Revenue = new VariableSettings { IsEnabled = true, Weight = 1.0 };
@@ -91,7 +89,7 @@ namespace Project02_Dendogram.Presentation
             VoteCount = new VariableSettings { IsEnabled = true, Weight = 1.0 };
             ReleaseYear = new VariableSettings { IsEnabled = true, Weight = 1.0 };
 
-            // Inicializar variables categóricas
+          
             Genres = new VariableSettings { IsEnabled = true, Weight = 15.0 };
             Cast = new VariableSettings { IsEnabled = true, Weight = 1.0 };
             Director = new VariableSettings { IsEnabled = true, Weight = 1.0 };
@@ -101,9 +99,9 @@ namespace Project02_Dendogram.Presentation
         }
     }
 
-    /// <summary>
-    /// Configuración individual de cada variable
-    /// </summary>
+    
+    // Configuración de cada variable
+    
     internal class VariableSettings
     {
         public bool IsEnabled { get; set; }

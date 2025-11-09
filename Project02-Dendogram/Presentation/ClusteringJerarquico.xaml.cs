@@ -7,12 +7,10 @@ using Project02_Dendogram.Models;
 
 namespace Project02_Dendogram.Presentation
 {
-    /// <summary>
-    /// Vista para el clustering jerárquico - Patrón MVC
-    /// </summary>
+    
     public partial class ClusteringJerarquico : Window
     {
-        // Model y Controller
+        
         private readonly ClusteringModel _model;
         private readonly ClusteringController _controller;
 
@@ -21,8 +19,6 @@ namespace Project02_Dendogram.Presentation
             InitializeComponent();
             _model = new ClusteringModel();
             _controller = new ClusteringController(_model);
-
-            // Suscribir después de crear el controller
             Metricas.SelectionChanged += Metricas_SelectionChanged;
 
             UpdateUI();
@@ -30,9 +26,9 @@ namespace Project02_Dendogram.Presentation
 
         #region Event Handlers
 
-        /// <summary>
-        /// Maneja el clic en el botón de cargar archivo
-        /// </summary>
+        
+        /// Maneja el botón de cargar archivo
+        
         private void CargarCSV_Click(object sender, RoutedEventArgs e)
         {
             try
@@ -42,7 +38,7 @@ namespace Project02_Dendogram.Presentation
 
                 OpenFileDialog openFileDialog = new OpenFileDialog
                 {
-                    Filter = "TSV files (*.tsv)|*.tsv|All files (*.*)|*.*",
+                    Filter = "TSV files (*.tsv)|*.tsv|CSV files (*.csv)|*.csv|All files (*.*)|*.*",
                     InitialDirectory = Directory.Exists(resourcesPath)
                         ? resourcesPath
                         : Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments)
@@ -72,12 +68,12 @@ namespace Project02_Dendogram.Presentation
             }
         }
 
-        /// <summary>
-        /// Maneja el cambio de métrica de distancia
-        /// </summary>
+        
+        //cambio de métrica de distancia
+      
         private void Metricas_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (_controller == null) return; // evita NRE durante inicialización
+            if (_controller == null) return; 
             if (Metricas.SelectedItem is ComboBoxItem selectedItem)
             {
                 string metricTag = selectedItem.Tag?.ToString() ?? "euclidean";
@@ -86,9 +82,9 @@ namespace Project02_Dendogram.Presentation
             }
         }
 
-        /// <summary>
-        /// Maneja el clic en el botón de ejecutar clusterización
-        /// </summary>
+        
+        // Maneja el botón de ejecutar clusterización
+        
         private void CargarJSON_Click(object sender, RoutedEventArgs e)
         {
             try
@@ -96,17 +92,14 @@ namespace Project02_Dendogram.Presentation
                 CargarJSON.IsEnabled = false;
                 UpdateStatusText("Procesando datos...");
 
-                // Capturar configuración de la UI
+                // Aplica la configuración 
                 CaptureVariableConfiguration();
 
-                // Capturar configuración de normalización
+                // Aplica configuración de normalización
                 CaptureNormalizationConfiguration();
 
-                // Ejecutar clusterización a través del controller
+                // Ejecutar clusterización 
                 _controller.ExecuteClustering();
-
-                // Mostrar resultados
-                DisplayResults();
 
                 MessageBox.Show("Clusterización completada exitosamente!",
                                 "Éxito", MessageBoxButton.OK, MessageBoxImage.Information);
@@ -125,24 +118,13 @@ namespace Project02_Dendogram.Presentation
             }
         }
 
-        /// <summary>
-        /// Maneja la selección de una película en la tabla
-        /// </summary>
-        private void DataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            if (Tabla1.SelectedItem is Movie selectedMovie)
-            {
-                UpdateStatusText($"Seleccionado: {selectedMovie.Title} ({selectedMovie.ReleaseYear})");
-            }
-        }
-
         #endregion
 
         #region Private Methods
 
-        /// <summary>
-        /// Captura la configuración de variables desde la UI
-        /// </summary>
+        
+        // Captura la configuración de variables 
+        
         private void CaptureVariableConfiguration()
         {
             // Variables numéricas
@@ -191,18 +173,18 @@ namespace Project02_Dendogram.Presentation
                 chkKeywords.IsChecked == true,
                 ParseWeight(txtKeywords.Text));
 
-            _controller.UpdateVariableConfig("countries",
-                chkCountries.IsChecked == true,
-                ParseWeight(txtCountries.Text));
+            _controller.UpdateVariableConfig("companies",
+                chkCompanies.IsChecked == true,
+                ParseWeight(txtCompanies.Text));
 
             _controller.UpdateVariableConfig("languages",
                 chkLanguages.IsChecked == true,
                 ParseWeight(txtLanguages.Text));
         }
 
-        /// <summary>
-        /// Captura la configuración de normalización desde la UI
-        /// </summary>
+        
+        // Captura la configuración de normalización 
+        
         private void CaptureNormalizationConfiguration()
         {
             // Budget
@@ -255,39 +237,29 @@ namespace Project02_Dendogram.Presentation
             }
         }
 
-        /// <summary>
-        /// Parsea un peso desde texto
-        /// </summary>
+        
+        // Parsea un peso desde texto
+        
         private double ParseWeight(string text)
         {
             if (double.TryParse(text.Replace('.', ','), out double weight))
             {
                 return weight;
             }
-            return 1.0; // Valor por defecto
+            return 1.0; 
         }
 
-        /// <summary>
-        /// Muestra los resultados en la tabla
-        /// </summary>
-        private void DisplayResults()
-        {
-            var moviesList = _controller.GetMoviesForDisplay();
-            Tabla1.ItemsSource = moviesList;
-            UpdateStatusText($"Mostrando {moviesList.Count} películas");
-        }
-
-        /// <summary>
-        /// Actualiza el texto de estado
-        /// </summary>
+        
+        // Actualiza el texto de estado
+       
         private void UpdateStatusText(string message)
         {
             StatusText.Text = message;
         }
 
-        /// <summary>
-        /// Actualiza toda la UI basada en el estado del modelo
-        /// </summary>
+        
+        /// Actualiza todo el view basado en el estado del model
+        
         private void UpdateUI()
         {
             UpdateStatusText(_model.StatusMessage);

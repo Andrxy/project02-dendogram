@@ -6,9 +6,7 @@ using Project02_Dendogram.Services;
 
 namespace Project02_Dendogram.Presentation
 {
-    /// <summary>
-    /// Controlador que maneja la lógica de negocio y coordina entre el Modelo y la Vista
-    /// </summary>
+    
     internal class ClusteringController
     {
         private readonly ClusteringModel _model;
@@ -18,9 +16,9 @@ namespace Project02_Dendogram.Presentation
             _model = model ?? throw new ArgumentNullException(nameof(model));
         }
 
-        /// <summary>
-        /// Carga un archivo TSV
-        /// </summary>
+        
+        // Carga un archivo TSV
+        
         public void LoadFile(string filePath)
         {
             if (string.IsNullOrEmpty(filePath))
@@ -33,26 +31,26 @@ namespace Project02_Dendogram.Presentation
             _model.StatusMessage = $"Archivo cargado: {Path.GetFileName(filePath)}";
         }
 
-        /// <summary>
-        /// Cambia la métrica de distancia
-        /// </summary>
+        
+        // Cambia la métrica de distancia
+        
         public void ChangeDistanceMetric(string metricName)
         {
             _model.ConfigurationManager.SetDistanceMetric(metricName);
             _model.StatusMessage = $"Métrica de distancia: {metricName}";
         }
 
-        /// <summary>
-        /// Actualiza la estrategia de normalización para una variable específica
-        /// </summary>
+        
+        // Cambia la estrategia de normalización para una variable 
+        
         public void UpdateNormalizationStrategy(string featureName, string strategyName)
         {
             _model.ConfigurationManager.SetNormalizationStrategyByName(featureName, strategyName);
         }
 
-        /// <summary>
-        /// Ejecuta todo el proceso de clusterización
-        /// </summary>
+        
+        //proceso de clusterización
+        
         public void ExecuteClustering()
         {
             if (!_model.IsFileLoaded)
@@ -98,18 +96,16 @@ namespace Project02_Dendogram.Presentation
                 System.Windows.MessageBoxButton.OK,
                 System.Windows.MessageBoxImage.Information
             );
-
         }
 
-        /// <summary>
-        /// Aplica la configuración de pesos de las variables
-        /// </summary>
+        //configuración de pesos de las variables
+        
         private void ApplyVariableConfiguration()
         {
             var config = _model.VariableConfig;
             var weights = new double[7];
 
-            // Variables numéricas
+       // Variables numéricas
             weights[0] = config.Budget.IsEnabled ? config.Budget.Weight : 0;
             weights[1] = config.Popularity.IsEnabled ? config.Popularity.Weight : 0;
             weights[2] = config.Revenue.IsEnabled ? config.Revenue.Weight : 0;
@@ -118,7 +114,7 @@ namespace Project02_Dendogram.Presentation
             weights[5] = config.VoteCount.IsEnabled ? config.VoteCount.Weight : 0;
             weights[6] = config.ReleaseYear.IsEnabled ? config.ReleaseYear.Weight : 0;
 
-            // Aplicar pesos numéricos
+            // Aplica pesos numéricos
             for (int i = 0; i < 7; i++)
             {
                 _model.ConfigurationManager.UpdateWeight(i, weights[i]);
@@ -164,9 +160,9 @@ namespace Project02_Dendogram.Presentation
             );
         }
 
-        /// <summary>
-        /// Aplica pesos a una variable categórica
-        /// </summary>
+        
+        // Aplica  los pesos a una variable categórica
+       
         private int ApplyCategoricalWeight(VariableSettings settings, int count, int startIndex)
         {
             if (settings.IsEnabled)
@@ -187,9 +183,9 @@ namespace Project02_Dendogram.Presentation
             return startIndex + count;
         }
 
-        /// <summary>
-        /// Actualiza la configuración de una variable
-        /// </summary>
+        
+        // Actualiza la configuración de una variable
+       
         public void UpdateVariableConfig(string variableName, bool isEnabled, double weight)
         {
             var config = _model.VariableConfig;
@@ -240,7 +236,7 @@ namespace Project02_Dendogram.Presentation
                     config.Keywords.IsEnabled = isEnabled;
                     config.Keywords.Weight = weight;
                     break;
-                case "countries":
+                case "companies":
                     config.ProductionCompanies.IsEnabled = isEnabled;
                     config.ProductionCompanies.Weight = weight;
                     break;
@@ -249,23 +245,6 @@ namespace Project02_Dendogram.Presentation
                     config.SpokenLanguages.Weight = weight;
                     break;
             }
-        }
-
-        /// <summary>
-        /// Obtiene una lista de películas para mostrar
-        /// </summary>
-        public System.Collections.Generic.List<Movie> GetMoviesForDisplay()
-        {
-            if (_model.Movies == null)
-                return new System.Collections.Generic.List<Movie>();
-
-            var moviesList = new System.Collections.Generic.List<Movie>();
-            var iterator = _model.Movies.CreateIterator();
-            while (iterator.HasNext())
-            {
-                moviesList.Add(iterator.Next());
-            }
-            return moviesList;
         }
 
         private string GetDendrogramString(Cluster node, string indent = "")
@@ -288,6 +267,5 @@ namespace Project02_Dendogram.Presentation
 
             return result;
         }
-
     }
 }

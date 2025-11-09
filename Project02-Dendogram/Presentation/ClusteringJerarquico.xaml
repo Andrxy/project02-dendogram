@@ -5,21 +5,20 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Project02_Dendogram.Presentation"
         mc:Ignorable="d"
-        Title="Clustering Jerárquico" Height="750" Width="950">
+        Title="Clustering Jerárquico" Height="650" Width="950">
     <Grid Margin="10">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
         <!-- Sección de Carga de Archivos -->
         <GroupBox Grid.Row="0" Header="Cargar Datos" Margin="0,0,0,10">
             <StackPanel Orientation="Horizontal" Margin="5">
-                <Button x:Name="CargarCSV" Content="Cargar Archivo .TSV" 
+                <Button x:Name="CargarCSV" Content="Cargar Archivo .CSV" 
                         Width="150" Height="35" Margin="0,0,10,0" 
                         Click="CargarCSV_Click"/>
                 <Label x:Name="NombreArchivo" Content="Ningún archivo cargado" 
@@ -35,13 +34,14 @@
                     <ComboBoxItem Content="Euclidiana" Tag="euclidean" IsSelected="True"/>
                     <ComboBoxItem Content="Manhattan" Tag="manhattan"/>
                     <ComboBoxItem Content="Coseno" Tag="cosine"/>
+                    <ComboBoxItem Content="Hamming" Tag="hamming"/>
                 </ComboBox>
             </StackPanel>
         </GroupBox>
 
         <!-- Sección de Configuración de Variables -->
         <GroupBox Grid.Row="2" Header="Configuración de Variables" Margin="0,0,0,10">
-            <ScrollViewer MaxHeight="250" VerticalScrollBarVisibility="Auto">
+            <ScrollViewer MaxHeight="300" VerticalScrollBarVisibility="Auto">
                 <StackPanel x:Name="VariablesPanel" Margin="5">
                     <!-- Variables numéricas -->
                     <TextBlock Text="Variables Numéricas:" FontWeight="Bold" Margin="0,0,0,5"/>
@@ -259,7 +259,7 @@
                         <TextBox x:Name="txtKeywords" Grid.Column="3" Text="1.0" Width="80" HorizontalAlignment="Left"/>
                     </Grid>
 
-                    <!-- Production Countries -->
+                    <!-- Production Companies -->
                     <Grid Margin="0,2">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="30"/>
@@ -267,10 +267,10 @@
                             <ColumnDefinition Width="100"/>
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
-                        <CheckBox x:Name="chkCountries" Grid.Column="0" IsChecked="True" VerticalAlignment="Center"/>
-                        <TextBlock Grid.Column="1" Text="Países Producción" VerticalAlignment="Center"/>
+                        <CheckBox x:Name="chkCompanies" Grid.Column="0" IsChecked="True" VerticalAlignment="Center"/>
+                        <TextBlock Grid.Column="1" Text="Compañías Producción" VerticalAlignment="Center"/>
                         <TextBlock Grid.Column="2" Text="Peso:" VerticalAlignment="Center" Margin="5,0"/>
-                        <TextBox x:Name="txtCountries" Grid.Column="3" Text="1.0" Width="80" HorizontalAlignment="Left"/>
+                        <TextBox x:Name="txtCompanies" Grid.Column="3" Text="1.0" Width="80" HorizontalAlignment="Left"/>
                     </Grid>
 
                     <!-- Spoken Languages -->
@@ -300,22 +300,8 @@
             </StackPanel>
         </GroupBox>
 
-        <!-- Tabla de Resultados -->
-        <GroupBox Grid.Row="4" Header="Resultados" Margin="0,0,0,10">
-            <DataGrid x:Name="Tabla1" 
-                      AutoGenerateColumns="False"
-                      IsReadOnly="True"
-                      SelectionChanged="DataGrid_SelectionChanged">
-                <DataGrid.Columns>
-                    <DataGridTextColumn Header="Título" Binding="{Binding Title}" Width="*"/>
-                    <DataGridTextColumn Header="Año" Binding="{Binding ReleaseYear}" Width="80"/>
-                    <DataGridTextColumn Header="Director" Binding="{Binding Director}" Width="150"/>
-                </DataGrid.Columns>
-            </DataGrid>
-        </GroupBox>
-
         <!-- Barra de Estado -->
-        <StatusBar Grid.Row="5">
+        <StatusBar Grid.Row="4">
             <StatusBarItem>
                 <TextBlock x:Name="StatusText" Text="Listo"/>
             </StatusBarItem>
