@@ -1,42 +1,40 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Project02_Dendogram.Models;
 using Project02_Dendogram.Models.DataStructures;
 
-namespace Project02_Dendogram.Models {
-    internal class Cluster
+internal class Cluster
+{
+    public CustomList<Movie> Movies { get; set; }
+    public CustomList<int> Indexes { get; set; }
+    public Cluster Left { get; set; }
+    public Cluster Right { get; set; }
+    public double Distance { get; set; }
+
+    public bool IsLeaf => Left == null && Right == null;
+
+    public Cluster(Movie movie, int index)
     {
-        public Movie Movie { get; set; }
-        public double Distance { get; set; }
-        public Cluster Left { get; set; }
-        public Cluster Right { get; set; }
+        Movies = new CustomList<Movie>();
+        Movies.Add(movie);
 
-        public CustomList<Movie> Movies { get; set; }
+        Indexes = new CustomList<int>();
+        Indexes.Add(index);
 
+        Left = null;
+        Right = null;
+    }
 
-        public Cluster(Movie movie) { 
-            Movie = movie;
-            Distance = 0.0;
+    public Cluster(Cluster A, Cluster B, double distance)
+    {
+        Left = A;
+        Right = B;
+        Distance = distance;
 
-            Movies = new CustomList<Movie>();
-            Movies.Add(movie);
+        Movies = new CustomList<Movie>();
+        Movies.Copy(A.Movies);
+        Movies.Copy(B.Movies);
 
-            Left = null;
-            Right = null;
-        }
-        public Cluster(Cluster left, Cluster right, double distance)
-        {
-            Movie = null;
-            Distance = distance;
-            Left = left;
-            Right = right;
-
-            Movies = new CustomList<Movie>();
-            Movies.Add(left.Movies);
-            Movies.Add(right.Movies);
-        }
-        public bool IsLeaf => Movie != null;
+        Indexes = new CustomList<int>();
+        Indexes.Copy(A.Indexes);
+        Indexes.Copy(B.Indexes);
     }
 }

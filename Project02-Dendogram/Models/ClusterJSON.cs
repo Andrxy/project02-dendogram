@@ -10,6 +10,11 @@ namespace Project02_Dendogram.Models
     {
         public string n { get; set; }
         public double d { get; set; }
-        public List<ClusterJson> c { get; set; } = new List<ClusterJson>();
+        public List<ClusterJson> c { get; set; }
+
+        public ClusterJson()
+        {
+            c = new List<ClusterJson>();
+        }
     }
 }

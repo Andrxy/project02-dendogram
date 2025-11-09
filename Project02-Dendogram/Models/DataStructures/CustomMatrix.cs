@@ -4,6 +4,8 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using Project02_Dendogram.Models.DataStructures.Interfaces;
+using Project02_Dendogram.Models.DataStructures.Iterators;
 
 namespace Project02_Dendogram.Models.DataStructures
 {

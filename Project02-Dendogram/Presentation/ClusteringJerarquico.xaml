@@ -5,306 +5,551 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Project02_Dendogram.Presentation"
         mc:Ignorable="d"
-        Title="Clustering Jerárquico" Height="650" Width="950">
-    <Grid Margin="10">
+        Title="Sistema de Clustering Jerárquico - Recomendación de Películas" 
+        Height="750" Width="1100"
+        Background="#F5F7FA"
+        WindowStartupLocation="CenterScreen">
+
+    <Window.Resources>
+        <!-- Estilos Modernos -->
+        <Style x:Key="ModernGroupBox" TargetType="GroupBox">
+            <Setter Property="Margin" Value="8"/>
+            <Setter Property="Padding" Value="12"/>
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="BorderBrush" Value="#E1E8ED"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="GroupBox">
+                        <Grid>
+                            <Border Background="{TemplateBinding Background}"
+                                   BorderBrush="{TemplateBinding BorderBrush}"
+                                   BorderThickness="{TemplateBinding BorderThickness}"
+                                   CornerRadius="8">
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="*"/>
+                                    </Grid.RowDefinitions>
+
+                                    <!-- Header -->
+                                    <Border Grid.Row="0" 
+                                           Background="#F8FAFC" 
+                                           CornerRadius="8,8,0,0"
+                                           Padding="12,8">
+                                        <ContentPresenter ContentSource="Header"
+                                                        TextElement.FontWeight="SemiBold"
+                                                        TextElement.FontSize="13"
+                                                        TextElement.Foreground="#334155"/>
+                                    </Border>
+
+                                    <!-- Content -->
+                                    <ContentPresenter Grid.Row="1" 
+                                                     Margin="{TemplateBinding Padding}"/>
+                                </Grid>
+                            </Border>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="PrimaryButton" TargetType="Button">
+            <Setter Property="Background" Value="#3B82F6"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="Padding" Value="16,10"/>
+            <Setter Property="Margin" Value="5"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" 
+                               CornerRadius="6" 
+                               Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" 
+                                            VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#2563EB"/>
+                </Trigger>
+                <Trigger Property="IsEnabled" Value="False">
+                    <Setter Property="Background" Value="#CBD5E1"/>
+                    <Setter Property="Foreground" Value="#64748B"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="SuccessButton" TargetType="Button" BasedOn="{StaticResource PrimaryButton}">
+            <Setter Property="Background" Value="#10B981"/>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#059669"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="ModernTextBox" TargetType="TextBox">
+            <Setter Property="Padding" Value="8,5"/>
+            <Setter Property="BorderBrush" Value="#E1E8ED"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="TextBox">
+                        <Border Background="{TemplateBinding Background}"
+                               BorderBrush="{TemplateBinding BorderBrush}"
+                               BorderThickness="{TemplateBinding BorderThickness}"
+                               CornerRadius="4">
+                            <ScrollViewer x:Name="PART_ContentHost" 
+                                        Margin="{TemplateBinding Padding}"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="ModernComboBox" TargetType="ComboBox">
+            <Setter Property="Padding" Value="8,5"/>
+            <Setter Property="BorderBrush" Value="#E1E8ED"/>
+            <Setter Property="Background" Value="White"/>
+        </Style>
+    </Window.Resources>
+
+    <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <!-- Sección de Carga de Archivos -->
-        <GroupBox Grid.Row="0" Header="Cargar Datos" Margin="0,0,0,10">
-            <StackPanel Orientation="Horizontal" Margin="5">
-                <Button x:Name="CargarCSV" Content="Cargar Archivo .CSV" 
-                        Width="150" Height="35" Margin="0,0,10,0" 
-                        Click="CargarCSV_Click"/>
-                <Label x:Name="NombreArchivo" Content="Ningún archivo cargado" 
-                       VerticalAlignment="Center" Foreground="Gray"/>
-            </StackPanel>
-        </GroupBox>
+        <!-- Header -->
+        <Border Grid.Row="0" Background="#1E293B" Padding="20,16">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
 
-        <!-- Sección de Métrica de Distancia -->
-        <GroupBox Grid.Row="1" Header="Métrica de Distancia" Margin="0,0,0,10">
-            <StackPanel Margin="5">
-                <ComboBox x:Name="Metricas" Height="35" 
-                          SelectionChanged="Metricas_SelectionChanged">
-                    <ComboBoxItem Content="Euclidiana" Tag="euclidean" IsSelected="True"/>
-                    <ComboBoxItem Content="Manhattan" Tag="manhattan"/>
-                    <ComboBoxItem Content="Coseno" Tag="cosine"/>
-                    <ComboBoxItem Content="Hamming" Tag="hamming"/>
-                </ComboBox>
-            </StackPanel>
-        </GroupBox>
-
-        <!-- Sección de Configuración de Variables -->
-        <GroupBox Grid.Row="2" Header="Configuración de Variables" Margin="0,0,0,10">
-            <ScrollViewer MaxHeight="300" VerticalScrollBarVisibility="Auto">
-                <StackPanel x:Name="VariablesPanel" Margin="5">
-                    <!-- Variables numéricas -->
-                    <TextBlock Text="Variables Numéricas:" FontWeight="Bold" Margin="0,0,0,5"/>
-
-                    <!-- Budget -->
-                    <Grid Margin="0,2">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="30"/>
-                            <ColumnDefinition Width="120"/>
-                            <ColumnDefinition Width="70"/>
-                            <ColumnDefinition Width="80"/>
-                            <ColumnDefinition Width="130"/>
-                            <ColumnDefinition Width="*"/>
-                        </Grid.ColumnDefinitions>
-                        <CheckBox x:Name="chkBudget" Grid.Column="0" IsChecked="True" VerticalAlignment="Center"/>
-                        <TextBlock Grid.Column="1" Text="Budget" VerticalAlignment="Center"/>
-                        <TextBlock Grid.Column="2" Text="Peso:" VerticalAlignment="Center" Margin="5,0"/>
-                        <TextBox x:Name="txtBudget" Grid.Column="3" Text="1.0" Width="70" HorizontalAlignment="Left"/>
-                        <TextBlock Grid.Column="4" Text="Normalización:" VerticalAlignment="Center" Margin="5,0"/>
-                        <ComboBox x:Name="cmbBudget" Grid.Column="5" Width="100" HorizontalAlignment="Left" SelectedIndex="0">
-                            <ComboBoxItem Content="MinMax" Tag="minmax"/>
-                            <ComboBoxItem Content="Z-Score" Tag="zscore"/>
-                            <ComboBoxItem Content="Log" Tag="log"/>
-                        </ComboBox>
-                    </Grid>
-
-                    <!-- Popularity -->
-                    <Grid Margin="0,2">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="30"/>
-                            <ColumnDefinition Width="120"/>
-                            <ColumnDefinition Width="70"/>
-                            <ColumnDefinition Width="80"/>
-                            <ColumnDefinition Width="130"/>
-                            <ColumnDefinition Width="*"/>
-                        </Grid.ColumnDefinitions>
-                        <CheckBox x:Name="chkPopularity" Grid.Column="0" IsChecked="True" VerticalAlignment="Center"/>
-                        <TextBlock Grid.Column="1" Text="Popularity" VerticalAlignment="Center"/>
-                        <TextBlock Grid.Column="2" Text="Peso:" VerticalAlignment="Center" Margin="5,0"/>
-                        <TextBox x:Name="txtPopularity" Grid.Column="3" Text="1.0" Width="70" HorizontalAlignment="Left"/>
-                        <TextBlock Grid.Column="4" Text="Normalización:" VerticalAlignment="Center" Margin="5,0"/>
-                        <ComboBox x:Name="cmbPopularity" Grid.Column="5" Width="100" HorizontalAlignment="Left" SelectedIndex="0">
-                            <ComboBoxItem Content="MinMax" Tag="minmax"/>
-                            <ComboBoxItem Content="Z-Score" Tag="zscore"/>
-                            <ComboBoxItem Content="Log" Tag="log"/>
-                        </ComboBox>
-                    </Grid>
-
-                    <!-- Revenue -->
-                    <Grid Margin="0,2">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="30"/>
-                            <ColumnDefinition Width="120"/>
-                            <ColumnDefinition Width="70"/>
-                            <ColumnDefinition Width="80"/>
-                            <ColumnDefinition Width="130"/>
-                            <ColumnDefinition Width="*"/>
-                        </Grid.ColumnDefinitions>
-                        <CheckBox x:Name="chkRevenue" Grid.Column="0" IsChecked="True" VerticalAlignment="Center"/>
-                        <TextBlock Grid.Column="1" Text="Revenue" VerticalAlignment="Center"/>
-                        <TextBlock Grid.Column="2" Text="Peso:" VerticalAlignment="Center" Margin="5,0"/>
-                        <TextBox x:Name="txtRevenue" Grid.Column="3" Text="1.0" Width="70" HorizontalAlignment="Left"/>
-                        <TextBlock Grid.Column="4" Text="Normalización:" VerticalAlignment="Center" Margin="5,0"/>
-                        <ComboBox x:Name="cmbRevenue" Grid.Column="5" Width="100" HorizontalAlignment="Left" SelectedIndex="0">
-                            <ComboBoxItem Content="MinMax" Tag="minmax"/>
-                            <ComboBoxItem Content="Z-Score" Tag="zscore"/>
-                            <ComboBoxItem Content="Log" Tag="log"/>
-                        </ComboBox>
-                    </Grid>
-
-                    <!-- Runtime -->
-                    <Grid Margin="0,2">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="30"/>
-                            <ColumnDefinition Width="120"/>
-                            <ColumnDefinition Width="70"/>
-                            <ColumnDefinition Width="80"/>
-                            <ColumnDefinition Width="130"/>
-                            <ColumnDefinition Width="*"/>
-                        </Grid.ColumnDefinitions>
-                        <CheckBox x:Name="chkRuntime" Grid.Column="0" IsChecked="True" VerticalAlignment="Center"/>
-                        <TextBlock Grid.Column="1" Text="Runtime" VerticalAlignment="Center"/>
-                        <TextBlock Grid.Column="2" Text="Peso:" VerticalAlignment="Center" Margin="5,0"/>
-                        <TextBox x:Name="txtRuntime" Grid.Column="3" Text="1.0" Width="70" HorizontalAlignment="Left"/>
-                        <TextBlock Grid.Column="4" Text="Normalización:" VerticalAlignment="Center" Margin="5,0"/>
-                        <ComboBox x:Name="cmbRuntime" Grid.Column="5" Width="100" HorizontalAlignment="Left" SelectedIndex="0">
-                            <ComboBoxItem Content="MinMax" Tag="minmax"/>
-                            <ComboBoxItem Content="Z-Score" Tag="zscore"/>
-                            <ComboBoxItem Content="Log" Tag="log"/>
-                        </ComboBox>
-                    </Grid>
-
-                    <!-- VoteAverage -->
-                    <Grid Margin="0,2">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="30"/>
-                            <ColumnDefinition Width="120"/>
-                            <ColumnDefinition Width="70"/>
-                            <ColumnDefinition Width="80"/>
-                            <ColumnDefinition Width="130"/>
-                            <ColumnDefinition Width="*"/>
-                        </Grid.ColumnDefinitions>
-                        <CheckBox x:Name="chkVoteAverage" Grid.Column="0" IsChecked="True" VerticalAlignment="Center"/>
-                        <TextBlock Grid.Column="1" Text="Vote Average" VerticalAlignment="Center"/>
-                        <TextBlock Grid.Column="2" Text="Peso:" VerticalAlignment="Center" Margin="5,0"/>
-                        <TextBox x:Name="txtVoteAverage" Grid.Column="3" Text="1.0" Width="70" HorizontalAlignment="Left"/>
-                        <TextBlock Grid.Column="4" Text="Normalización:" VerticalAlignment="Center" Margin="5,0"/>
-                        <ComboBox x:Name="cmbVoteAverage" Grid.Column="5" Width="100" HorizontalAlignment="Left" SelectedIndex="0">
-                            <ComboBoxItem Content="MinMax" Tag="minmax"/>
-                            <ComboBoxItem Content="Z-Score" Tag="zscore"/>
-                            <ComboBoxItem Content="Log" Tag="log"/>
-                        </ComboBox>
-                    </Grid>
-
-                    <!-- VoteCount -->
-                    <Grid Margin="0,2">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="30"/>
-                            <ColumnDefinition Width="120"/>
-                            <ColumnDefinition Width="70"/>
-                            <ColumnDefinition Width="80"/>
-                            <ColumnDefinition Width="130"/>
-                            <ColumnDefinition Width="*"/>
-                        </Grid.ColumnDefinitions>
-                        <CheckBox x:Name="chkVoteCount" Grid.Column="0" IsChecked="True" VerticalAlignment="Center"/>
-                        <TextBlock Grid.Column="1" Text="Vote Count" VerticalAlignment="Center"/>
-                        <TextBlock Grid.Column="2" Text="Peso:" VerticalAlignment="Center" Margin="5,0"/>
-                        <TextBox x:Name="txtVoteCount" Grid.Column="3" Text="1.0" Width="70" HorizontalAlignment="Left"/>
-                        <TextBlock Grid.Column="4" Text="Normalización:" VerticalAlignment="Center" Margin="5,0"/>
-                        <ComboBox x:Name="cmbVoteCount" Grid.Column="5" Width="100" HorizontalAlignment="Left" SelectedIndex="0">
-                            <ComboBoxItem Content="MinMax" Tag="minmax"/>
-                            <ComboBoxItem Content="Z-Score" Tag="zscore"/>
-                            <ComboBoxItem Content="Log" Tag="log"/>
-                        </ComboBox>
-                    </Grid>
-
-                    <!-- ReleaseYear -->
-                    <Grid Margin="0,2">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="30"/>
-                            <ColumnDefinition Width="120"/>
-                            <ColumnDefinition Width="70"/>
-                            <ColumnDefinition Width="80"/>
-                            <ColumnDefinition Width="130"/>
-                            <ColumnDefinition Width="*"/>
-                        </Grid.ColumnDefinitions>
-                        <CheckBox x:Name="chkReleaseYear" Grid.Column="0" IsChecked="True" VerticalAlignment="Center"/>
-                        <TextBlock Grid.Column="1" Text="Release Year" VerticalAlignment="Center"/>
-                        <TextBlock Grid.Column="2" Text="Peso:" VerticalAlignment="Center" Margin="5,0"/>
-                        <TextBox x:Name="txtReleaseYear" Grid.Column="3" Text="1.0" Width="70" HorizontalAlignment="Left"/>
-                        <TextBlock Grid.Column="4" Text="Normalización:" VerticalAlignment="Center" Margin="5,0"/>
-                        <ComboBox x:Name="cmbReleaseYear" Grid.Column="5" Width="100" HorizontalAlignment="Left" SelectedIndex="0">
-                            <ComboBoxItem Content="MinMax" Tag="minmax"/>
-                            <ComboBoxItem Content="Z-Score" Tag="zscore"/>
-                            <ComboBoxItem Content="Log" Tag="log"/>
-                        </ComboBox>
-                    </Grid>
-
-                    <!-- Variables categóricas -->
-                    <TextBlock Text="Variables Categóricas:" FontWeight="Bold" Margin="0,10,0,5"/>
-
-                    <!-- Genres -->
-                    <Grid Margin="0,2">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="30"/>
-                            <ColumnDefinition Width="150"/>
-                            <ColumnDefinition Width="100"/>
-                            <ColumnDefinition Width="*"/>
-                        </Grid.ColumnDefinitions>
-                        <CheckBox x:Name="chkGenres" Grid.Column="0" IsChecked="True" VerticalAlignment="Center"/>
-                        <TextBlock Grid.Column="1" Text="Géneros" VerticalAlignment="Center"/>
-                        <TextBlock Grid.Column="2" Text="Peso:" VerticalAlignment="Center" Margin="5,0"/>
-                        <TextBox x:Name="txtGenres" Grid.Column="3" Text="15.0" Width="80" HorizontalAlignment="Left"/>
-                    </Grid>
-
-                    <!-- Cast -->
-                    <Grid Margin="0,2">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="30"/>
-                            <ColumnDefinition Width="150"/>
-                            <ColumnDefinition Width="100"/>
-                            <ColumnDefinition Width="*"/>
-                        </Grid.ColumnDefinitions>
-                        <CheckBox x:Name="chkCast" Grid.Column="0" IsChecked="True" VerticalAlignment="Center"/>
-                        <TextBlock Grid.Column="1" Text="Reparto" VerticalAlignment="Center"/>
-                        <TextBlock Grid.Column="2" Text="Peso:" VerticalAlignment="Center" Margin="5,0"/>
-                        <TextBox x:Name="txtCast" Grid.Column="3" Text="1.0" Width="80" HorizontalAlignment="Left"/>
-                    </Grid>
-
-                    <!-- Director -->
-                    <Grid Margin="0,2">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="30"/>
-                            <ColumnDefinition Width="150"/>
-                            <ColumnDefinition Width="100"/>
-                            <ColumnDefinition Width="*"/>
-                        </Grid.ColumnDefinitions>
-                        <CheckBox x:Name="chkDirector" Grid.Column="0" IsChecked="True" VerticalAlignment="Center"/>
-                        <TextBlock Grid.Column="1" Text="Director" VerticalAlignment="Center"/>
-                        <TextBlock Grid.Column="2" Text="Peso:" VerticalAlignment="Center" Margin="5,0"/>
-                        <TextBox x:Name="txtDirector" Grid.Column="3" Text="1.0" Width="80" HorizontalAlignment="Left"/>
-                    </Grid>
-
-                    <!-- Keywords -->
-                    <Grid Margin="0,2">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="30"/>
-                            <ColumnDefinition Width="150"/>
-                            <ColumnDefinition Width="100"/>
-                            <ColumnDefinition Width="*"/>
-                        </Grid.ColumnDefinitions>
-                        <CheckBox x:Name="chkKeywords" Grid.Column="0" IsChecked="True" VerticalAlignment="Center"/>
-                        <TextBlock Grid.Column="1" Text="Palabras Clave" VerticalAlignment="Center"/>
-                        <TextBlock Grid.Column="2" Text="Peso:" VerticalAlignment="Center" Margin="5,0"/>
-                        <TextBox x:Name="txtKeywords" Grid.Column="3" Text="1.0" Width="80" HorizontalAlignment="Left"/>
-                    </Grid>
-
-                    <!-- Production Companies -->
-                    <Grid Margin="0,2">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="30"/>
-                            <ColumnDefinition Width="150"/>
-                            <ColumnDefinition Width="100"/>
-                            <ColumnDefinition Width="*"/>
-                        </Grid.ColumnDefinitions>
-                        <CheckBox x:Name="chkCompanies" Grid.Column="0" IsChecked="True" VerticalAlignment="Center"/>
-                        <TextBlock Grid.Column="1" Text="Compañías Producción" VerticalAlignment="Center"/>
-                        <TextBlock Grid.Column="2" Text="Peso:" VerticalAlignment="Center" Margin="5,0"/>
-                        <TextBox x:Name="txtCompanies" Grid.Column="3" Text="1.0" Width="80" HorizontalAlignment="Left"/>
-                    </Grid>
-
-                    <!-- Spoken Languages -->
-                    <Grid Margin="0,2">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="30"/>
-                            <ColumnDefinition Width="150"/>
-                            <ColumnDefinition Width="100"/>
-                            <ColumnDefinition Width="*"/>
-                        </Grid.ColumnDefinitions>
-                        <CheckBox x:Name="chkLanguages" Grid.Column="0" IsChecked="True" VerticalAlignment="Center"/>
-                        <TextBlock Grid.Column="1" Text="Idiomas" VerticalAlignment="Center"/>
-                        <TextBlock Grid.Column="2" Text="Peso:" VerticalAlignment="Center" Margin="5,0"/>
-                        <TextBox x:Name="txtLanguages" Grid.Column="3" Text="1.0" Width="80" HorizontalAlignment="Left"/>
-                    </Grid>
+                <StackPanel Grid.Column="0">
+                    <TextBlock Text="Sistema de Clustering Jerárquico" 
+                              FontSize="20" 
+                              FontWeight="Bold" 
+                              Foreground="White"/>
+                    <TextBlock Text="Análisis y Recomendación de Películas mediante Dendogramas" 
+                              FontSize="12" 
+                              Foreground="#94A3B8" 
+                              Margin="0,4,0,0"/>
                 </StackPanel>
-            </ScrollViewer>
-        </GroupBox>
 
-        <!-- Botón de Clusterización -->
-        <GroupBox Grid.Row="3" Header="Acción" Margin="0,0,0,10">
-            <StackPanel Margin="5">
-                <Button x:Name="CargarJSON" Content="Ejecutar Clusterización" 
-                        Width="200" Height="40" 
-                        Click="CargarJSON_Click"
-                        IsEnabled="False"/>
+                <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                    <TextBlock Text="🎬" FontSize="28" VerticalAlignment="Center" Margin="0,0,10,0"/>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <!-- Main Content -->
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" Padding="10">
+            <StackPanel>
+                <!-- Cargar Datos -->
+                <GroupBox Header="📂 Carga de Datos" Style="{StaticResource ModernGroupBox}">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <Button x:Name="CargarCSV" 
+                               Grid.Column="0"
+                               Content="Cargar Archivo CSV" 
+                               Style="{StaticResource PrimaryButton}"
+                               Width="180"
+                               Click="CargarCSV_Click"/>
+
+                        <Border Grid.Column="1" 
+                               Background="#F1F5F9" 
+                               CornerRadius="6" 
+                               Padding="12" 
+                               Margin="10,0,0,0">
+                            <TextBlock x:Name="NombreArchivo" 
+                                      Text="Ningún archivo cargado" 
+                                      VerticalAlignment="Center" 
+                                      Foreground="#64748B"
+                                      FontStyle="Italic"/>
+                        </Border>
+                    </Grid>
+                </GroupBox>
+
+                <!-- Configuración Principal -->
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <!-- Métrica de Distancia -->
+                    <GroupBox Grid.Column="0" 
+                             Header="📏 Métrica de Distancia" 
+                             Style="{StaticResource ModernGroupBox}">
+                        <StackPanel>
+                            <ComboBox x:Name="Metricas" 
+                                     Height="35" 
+                                     Style="{StaticResource ModernComboBox}"
+                                     SelectionChanged="Metricas_SelectionChanged">
+                                <ComboBoxItem Content="Euclidiana (Recomendada)" Tag="euclidean" IsSelected="True"/>
+                                <ComboBoxItem Content="Manhattan (City Block)" Tag="manhattan"/>
+                                <ComboBoxItem Content="Coseno (Similitud Angular)" Tag="cosine"/>
+                                <ComboBoxItem Content="Hamming (Diferencias Binarias)" Tag="hamming"/>
+                            </ComboBox>
+                            <TextBlock Text="Seleccione cómo medir la distancia entre películas" 
+                                      Foreground="#64748B" 
+                                      FontSize="11" 
+                                      Margin="0,8,0,0"
+                                      TextWrapping="Wrap"/>
+                        </StackPanel>
+                    </GroupBox>
+
+                    <!-- Info Rápida -->
+                    <GroupBox Grid.Column="1" 
+                             Header="ℹ️ Información del Dataset" 
+                             Style="{StaticResource ModernGroupBox}">
+                        <Border Background="#F8FAFC" 
+                               CornerRadius="4" 
+                               Padding="12">
+                            <TextBlock x:Name="DatasetInfo" 
+                                      Text="Cargue un archivo para ver información" 
+                                      Foreground="#475569"
+                                      FontSize="11"
+                                      TextWrapping="Wrap"/>
+                        </Border>
+                    </GroupBox>
+                </Grid>
+
+                <!-- Variables Numéricas -->
+                <GroupBox Header="🔢 Configuración de Variables Numéricas" 
+                         Style="{StaticResource ModernGroupBox}">
+                    <ScrollViewer MaxHeight="280" VerticalScrollBarVisibility="Auto">
+                        <StackPanel x:Name="NumericVariablesPanel">
+                            <!-- Budget -->
+                            <Border Background="#FAFBFC" CornerRadius="4" Padding="10" Margin="0,4">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="30"/>
+                                        <ColumnDefinition Width="140"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="80"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="120"/>
+                                    </Grid.ColumnDefinitions>
+                                    <CheckBox x:Name="chkBudget" Grid.Column="0" IsChecked="True" VerticalAlignment="Center"/>
+                                    <TextBlock Grid.Column="1" Text="Presupuesto" VerticalAlignment="Center" FontWeight="Medium"/>
+                                    <TextBlock Grid.Column="2" Text="Peso:" VerticalAlignment="Center" Margin="5,0"/>
+                                    <TextBox x:Name="txtBudget" Grid.Column="3" Text="1.0" Style="{StaticResource ModernTextBox}"/>
+                                    <TextBlock Grid.Column="4" Text="Normalización:" VerticalAlignment="Center" Margin="10,0,5,0"/>
+                                    <ComboBox x:Name="cmbBudget" Grid.Column="5" Style="{StaticResource ModernComboBox}" SelectedIndex="0">
+                                        <ComboBoxItem Content="MinMax" Tag="minmax"/>
+                                        <ComboBoxItem Content="Z-Score" Tag="zscore"/>
+                                        <ComboBoxItem Content="Log" Tag="log"/>
+                                    </ComboBox>
+                                </Grid>
+                            </Border>
+
+                            <!-- Popularity -->
+                            <Border Background="#FAFBFC" CornerRadius="4" Padding="10" Margin="0,4">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="30"/>
+                                        <ColumnDefinition Width="140"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="80"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="120"/>
+                                    </Grid.ColumnDefinitions>
+                                    <CheckBox x:Name="chkPopularity" Grid.Column="0" IsChecked="True" VerticalAlignment="Center"/>
+                                    <TextBlock Grid.Column="1" Text="Popularidad" VerticalAlignment="Center" FontWeight="Medium"/>
+                                    <TextBlock Grid.Column="2" Text="Peso:" VerticalAlignment="Center" Margin="5,0"/>
+                                    <TextBox x:Name="txtPopularity" Grid.Column="3" Text="1.0" Style="{StaticResource ModernTextBox}"/>
+                                    <TextBlock Grid.Column="4" Text="Normalización:" VerticalAlignment="Center" Margin="10,0,5,0"/>
+                                    <ComboBox x:Name="cmbPopularity" Grid.Column="5" Style="{StaticResource ModernComboBox}" SelectedIndex="0">
+                                        <ComboBoxItem Content="MinMax" Tag="minmax"/>
+                                        <ComboBoxItem Content="Z-Score" Tag="zscore"/>
+                                        <ComboBoxItem Content="Log" Tag="log"/>
+                                    </ComboBox>
+                                </Grid>
+                            </Border>
+
+                            <!-- Revenue -->
+                            <Border Background="#FAFBFC" CornerRadius="4" Padding="10" Margin="0,4">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="30"/>
+                                        <ColumnDefinition Width="140"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="80"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="120"/>
+                                    </Grid.ColumnDefinitions>
+                                    <CheckBox x:Name="chkRevenue" Grid.Column="0" IsChecked="True" VerticalAlignment="Center"/>
+                                    <TextBlock Grid.Column="1" Text="Ingresos" VerticalAlignment="Center" FontWeight="Medium"/>
+                                    <TextBlock Grid.Column="2" Text="Peso:" VerticalAlignment="Center" Margin="5,0"/>
+                                    <TextBox x:Name="txtRevenue" Grid.Column="3" Text="1.0" Style="{StaticResource ModernTextBox}"/>
+                                    <TextBlock Grid.Column="4" Text="Normalización:" VerticalAlignment="Center" Margin="10,0,5,0"/>
+                                    <ComboBox x:Name="cmbRevenue" Grid.Column="5" Style="{StaticResource ModernComboBox}" SelectedIndex="0">
+                                        <ComboBoxItem Content="MinMax" Tag="minmax"/>
+                                        <ComboBoxItem Content="Z-Score" Tag="zscore"/>
+                                        <ComboBoxItem Content="Log" Tag="log"/>
+                                    </ComboBox>
+                                </Grid>
+                            </Border>
+
+                            <!-- Runtime -->
+                            <Border Background="#FAFBFC" CornerRadius="4" Padding="10" Margin="0,4">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="30"/>
+                                        <ColumnDefinition Width="140"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="80"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="120"/>
+                                    </Grid.ColumnDefinitions>
+                                    <CheckBox x:Name="chkRuntime" Grid.Column="0" IsChecked="True" VerticalAlignment="Center"/>
+                                    <TextBlock Grid.Column="1" Text="Duración" VerticalAlignment="Center" FontWeight="Medium"/>
+                                    <TextBlock Grid.Column="2" Text="Peso:" VerticalAlignment="Center" Margin="5,0"/>
+                                    <TextBox x:Name="txtRuntime" Grid.Column="3" Text="1.0" Style="{StaticResource ModernTextBox}"/>
+                                    <TextBlock Grid.Column="4" Text="Normalización:" VerticalAlignment="Center" Margin="10,0,5,0"/>
+                                    <ComboBox x:Name="cmbRuntime" Grid.Column="5" Style="{StaticResource ModernComboBox}" SelectedIndex="0">
+                                        <ComboBoxItem Content="MinMax" Tag="minmax"/>
+                                        <ComboBoxItem Content="Z-Score" Tag="zscore"/>
+                                        <ComboBoxItem Content="Log" Tag="log"/>
+                                    </ComboBox>
+                                </Grid>
+                            </Border>
+
+                            <!-- VoteAverage -->
+                            <Border Background="#FAFBFC" CornerRadius="4" Padding="10" Margin="0,4">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="30"/>
+                                        <ColumnDefinition Width="140"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="80"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="120"/>
+                                    </Grid.ColumnDefinitions>
+                                    <CheckBox x:Name="chkVoteAverage" Grid.Column="0" IsChecked="True" VerticalAlignment="Center"/>
+                                    <TextBlock Grid.Column="1" Text="Calificación" VerticalAlignment="Center" FontWeight="Medium"/>
+                                    <TextBlock Grid.Column="2" Text="Peso:" VerticalAlignment="Center" Margin="5,0"/>
+                                    <TextBox x:Name="txtVoteAverage" Grid.Column="3" Text="1.0" Style="{StaticResource ModernTextBox}"/>
+                                    <TextBlock Grid.Column="4" Text="Normalización:" VerticalAlignment="Center" Margin="10,0,5,0"/>
+                                    <ComboBox x:Name="cmbVoteAverage" Grid.Column="5" Style="{StaticResource ModernComboBox}" SelectedIndex="0">
+                                        <ComboBoxItem Content="MinMax" Tag="minmax"/>
+                                        <ComboBoxItem Content="Z-Score" Tag="zscore"/>
+                                        <ComboBoxItem Content="Log" Tag="log"/>
+                                    </ComboBox>
+                                </Grid>
+                            </Border>
+
+                            <!-- VoteCount -->
+                            <Border Background="#FAFBFC" CornerRadius="4" Padding="10" Margin="0,4">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="30"/>
+                                        <ColumnDefinition Width="140"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="80"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="120"/>
+                                    </Grid.ColumnDefinitions>
+                                    <CheckBox x:Name="chkVoteCount" Grid.Column="0" IsChecked="True" VerticalAlignment="Center"/>
+                                    <TextBlock Grid.Column="1" Text="Núm. de Votos" VerticalAlignment="Center" FontWeight="Medium"/>
+                                    <TextBlock Grid.Column="2" Text="Peso:" VerticalAlignment="Center" Margin="5,0"/>
+                                    <TextBox x:Name="txtVoteCount" Grid.Column="3" Text="1.0" Style="{StaticResource ModernTextBox}"/>
+                                    <TextBlock Grid.Column="4" Text="Normalización:" VerticalAlignment="Center" Margin="10,0,5,0"/>
+                                    <ComboBox x:Name="cmbVoteCount" Grid.Column="5" Style="{StaticResource ModernComboBox}" SelectedIndex="0">
+                                        <ComboBoxItem Content="MinMax" Tag="minmax"/>
+                                        <ComboBoxItem Content="Z-Score" Tag="zscore"/>
+                                        <ComboBoxItem Content="Log" Tag="log"/>
+                                    </ComboBox>
+                                </Grid>
+                            </Border>
+
+                            <!-- ReleaseYear -->
+                            <Border Background="#FAFBFC" CornerRadius="4" Padding="10" Margin="0,4">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="30"/>
+                                        <ColumnDefinition Width="140"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="80"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="120"/>
+                                    </Grid.ColumnDefinitions>
+                                    <CheckBox x:Name="chkReleaseYear" Grid.Column="0" IsChecked="True" VerticalAlignment="Center"/>
+                                    <TextBlock Grid.Column="1" Text="Año de Lanzamiento" VerticalAlignment="Center" FontWeight="Medium"/>
+                                    <TextBlock Grid.Column="2" Text="Peso:" VerticalAlignment="Center" Margin="5,0"/>
+                                    <TextBox x:Name="txtReleaseYear" Grid.Column="3" Text="1.0" Style="{StaticResource ModernTextBox}"/>
+                                    <TextBlock Grid.Column="4" Text="Normalización:" VerticalAlignment="Center" Margin="10,0,5,0"/>
+                                    <ComboBox x:Name="cmbReleaseYear" Grid.Column="5" Style="{StaticResource ModernComboBox}" SelectedIndex="0">
+                                        <ComboBoxItem Content="MinMax" Tag="minmax"/>
+                                        <ComboBoxItem Content="Z-Score" Tag="zscore"/>
+                                        <ComboBoxItem Content="Log" Tag="log"/>
+                                    </ComboBox>
+                                </Grid>
+                            </Border>
+                        </StackPanel>
+                    </ScrollViewer>
+                </GroupBox>
+
+                <!-- Variables Categóricas -->
+                <GroupBox Header="🎭 Configuración de Variables Categóricas" 
+                         Style="{StaticResource ModernGroupBox}">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <StackPanel Grid.Column="0" Margin="5">
+                            <!-- Genres -->
+                            <Border Background="#FEF3C7" CornerRadius="4" Padding="10" Margin="0,4">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="30"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="60"/>
+                                    </Grid.ColumnDefinitions>
+                                    <CheckBox x:Name="chkGenres" Grid.Column="0" IsChecked="True" VerticalAlignment="Center"/>
+                                    <TextBlock Grid.Column="1" Text="Géneros" VerticalAlignment="Center" FontWeight="SemiBold"/>
+                                    <TextBox x:Name="txtGenres" Grid.Column="2" Text="15.0" Style="{StaticResource ModernTextBox}"/>
+                                </Grid>
+                            </Border>
+
+                            <!-- Cast -->
+                            <Border Background="#FAFBFC" CornerRadius="4" Padding="10" Margin="0,4">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="30"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="60"/>
+                                    </Grid.ColumnDefinitions>
+                                    <CheckBox x:Name="chkCast" Grid.Column="0" IsChecked="True" VerticalAlignment="Center"/>
+                                    <TextBlock Grid.Column="1" Text="Reparto" VerticalAlignment="Center" FontWeight="Medium"/>
+                                    <TextBox x:Name="txtCast" Grid.Column="2" Text="1.0" Style="{StaticResource ModernTextBox}"/>
+                                </Grid>
+                            </Border>
+                        </StackPanel>
+
+                        <StackPanel Grid.Column="1" Margin="5">
+                            <!-- Director -->
+                            <Border Background="#FAFBFC" CornerRadius="4" Padding="10" Margin="0,4">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="30"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="60"/>
+                                    </Grid.ColumnDefinitions>
+                                    <CheckBox x:Name="chkDirector" Grid.Column="0" IsChecked="True" VerticalAlignment="Center"/>
+                                    <TextBlock Grid.Column="1" Text="Director" VerticalAlignment="Center" FontWeight="Medium"/>
+                                    <TextBox x:Name="txtDirector" Grid.Column="2" Text="1.0" Style="{StaticResource ModernTextBox}"/>
+                                </Grid>
+                            </Border>
+
+                            <!-- Keywords -->
+                            <Border Background="#FAFBFC" CornerRadius="4" Padding="10" Margin="0,4">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="30"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="60"/>
+                                    </Grid.ColumnDefinitions>
+                                    <CheckBox x:Name="chkKeywords" Grid.Column="0" IsChecked="True" VerticalAlignment="Center"/>
+                                    <TextBlock Grid.Column="1" Text="Palabras Clave" VerticalAlignment="Center" FontWeight="Medium"/>
+                                    <TextBox x:Name="txtKeywords" Grid.Column="2" Text="1.0" Style="{StaticResource ModernTextBox}"/>
+                                </Grid>
+                            </Border>
+                        </StackPanel>
+
+                        <StackPanel Grid.Column="2" Margin="5">
+                            <!-- Companies -->
+                            <Border Background="#FAFBFC" CornerRadius="4" Padding="10" Margin="0,4">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="30"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="60"/>
+                                    </Grid.ColumnDefinitions>
+                                    <CheckBox x:Name="chkCompanies" Grid.Column="0" IsChecked="True" VerticalAlignment="Center"/>
+                                    <TextBlock Grid.Column="1" Text="Productoras" VerticalAlignment="Center" FontWeight="Medium"/>
+                                    <TextBox x:Name="txtCompanies" Grid.Column="2" Text="1.0" Style="{StaticResource ModernTextBox}"/>
+                                </Grid>
+                            </Border>
+
+                            <!-- Languages -->
+                            <Border Background="#FAFBFC" CornerRadius="4" Padding="10" Margin="0,4">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="30"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="60"/>
+                                    </Grid.ColumnDefinitions>
+                                    <CheckBox x:Name="chkLanguages" Grid.Column="0" IsChecked="True" VerticalAlignment="Center"/>
+                                    <TextBlock Grid.Column="1" Text="Idiomas" VerticalAlignment="Center" FontWeight="Medium"/>
+                                    <TextBox x:Name="txtLanguages" Grid.Column="2" Text="1.0" Style="{StaticResource ModernTextBox}"/>
+                                </Grid>
+                            </Border>
+                        </StackPanel>
+                    </Grid>
+                </GroupBox>
+
+                <!-- Acción -->
+                <GroupBox Header="🚀 Ejecutar Análisis" Style="{StaticResource ModernGroupBox}">
+                    <StackPanel>
+                        <Button x:Name="CargarJSON" 
+                               Content="🎬 Ejecutar Clusterización" 
+                               Style="{StaticResource SuccessButton}"
+                               Height="48"
+                               FontSize="15"
+                               Click="CargarJSON_Click"
+                               IsEnabled="False"/>
+                        <TextBlock Text="Configure las opciones y presione el botón para generar el dendograma" 
+                                  Foreground="#64748B" 
+                                  FontSize="11" 
+                                  Margin="0,8,0,0"
+                                  TextAlignment="Center"/>
+                    </StackPanel>
+                </GroupBox>
             </StackPanel>
-        </GroupBox>
+        </ScrollViewer>
 
-        <!-- Barra de Estado -->
-        <StatusBar Grid.Row="4">
-            <StatusBarItem>
-                <TextBlock x:Name="StatusText" Text="Listo"/>
-            </StatusBarItem>
-        </StatusBar>
+        <!-- Status Bar -->
+        <Border Grid.Row="2" Background="#1E293B" Padding="16,12">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Grid.Column="0" 
+                          Text="Estado:" 
+                          Foreground="#94A3B8" 
+                          FontWeight="SemiBold"
+                          VerticalAlignment="Center"
+                          Margin="0,0,10,0"/>
+
+                <TextBlock x:Name="StatusText" 
+                          Grid.Column="1"
+                          Text="Listo" 
+                          Foreground="#E2E8F0"
+                          VerticalAlignment="Center"/>
+            </Grid>
+        </Border>
     </Grid>
 </Window>
