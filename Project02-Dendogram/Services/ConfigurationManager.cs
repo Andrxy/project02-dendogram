@@ -47,12 +47,12 @@ namespace Project02_Dendogram.Services
 
         private readonly string[] CategoricalFeatureNames = new string[]
         {
-            "Genres",                   // 7+
-            "Cast",                     // 7+genre_count
-            "Director",                 // 7+genre_count+cast_count
-            "Keywords",                 // ...
-            "ProductionCompanies",      // ...
-            "SpokenLanguages"           // ...
+            "Genres",                   
+            "Cast",                     
+            "Director",                
+            "Keywords",                 
+            "ProductionCompanies",     
+            "SpokenLanguages"           
         };
 
         // Índices para acceso rápido a settings de variables

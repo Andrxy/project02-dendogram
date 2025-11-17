@@ -118,7 +118,7 @@ namespace Project02_Dendogram.Presentation
         {
             JSONExporter exporter = new JSONExporter();
             exporter.ExportToFile(_model.DendrogramRoot);
-            _model.StatusMessage = "✓ Dendrograma exportado a JSON";
+            _model.StatusMessage = "Dendrograma exportado a JSON";
         }
     }
 }

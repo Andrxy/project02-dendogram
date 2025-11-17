@@ -1,14 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Project02_Dendogram.Models.DataStructures.Interfaces;
 
 namespace Project02_Dendogram.Models.DataStructures
 {
     public class CustomHashMap<TKey, TValue> : IIterable<KeyValuePair<TKey, TValue>>
     {
+        // Nodo interno para la lista enlazada usada en colisiones
         private class Entry
         {
             public TKey Key { get; set; }
@@ -23,108 +20,115 @@ namespace Project02_Dendogram.Models.DataStructures
             }
         }
 
-        private Entry[] _buckets;
-        private int _size;
-        private int _capacity;
+        private Entry[] buckets;
+        private int size;
+        private int capacity;
+
         private const double LOAD_FACTOR = 0.75;
 
         public CustomHashMap(int initialCapacity = 16)
         {
-            _capacity = initialCapacity;
-            _buckets = new Entry[_capacity];
-            _size = 0;
+            capacity = initialCapacity;
+            buckets = new Entry[capacity];
+            size = 0;
         }
 
-        public int Count => _size;
+        public int Count => size;
 
-        // O(1) amortizado - insertar o actualizar
+        // Inserta o actualiza un valor (O(1) amortizado)
         public void Put(TKey key, TValue value)
         {
-            if ((double)_size / _capacity >= LOAD_FACTOR)
+            if ((double)size / capacity >= LOAD_FACTOR)
                 Resize();
 
             int index = GetBucketIndex(key);
-            Entry entry = _buckets[index];
+            Entry current = buckets[index];
 
-            // Buscar si ya existe
-            while (entry != null)
+            // Si ya existe la clave, actualizamos
+            while (current != null)
             {
-                if (entry.Key.Equals(key))
+                if (current.Key.Equals(key))
                 {
-                    entry.Value = value;
+                    current.Value = value;
                     return;
                 }
-                entry = entry.Next;
+                current = current.Next;
             }
 
-            // Agregar nuevo
-            Entry newEntry = new Entry(key, value);
-            newEntry.Next = _buckets[index];
-            _buckets[index] = newEntry;
-            _size++;
+            // Si no existe, agregamos al inicio de la lista del bucket
+            Entry newEntry = new Entry(key, value)
+            {
+                Next = buckets[index]
+            };
+
+            buckets[index] = newEntry;
+            size++;
         }
 
-        // O(1) promedio - obtener valor
+        // Obtiene el valor asociado a una clave (O(1) promedio)
         public TValue Get(TKey key)
         {
             int index = GetBucketIndex(key);
-            Entry entry = _buckets[index];
+            Entry current = buckets[index];
 
-            while (entry != null)
+            while (current != null)
             {
-                if (entry.Key.Equals(key))
-                    return entry.Value;
-                entry = entry.Next;
+                if (current.Key.Equals(key))
+                    return current.Value;
+
+                current = current.Next;
             }
 
-            throw new KeyNotFoundException($"Key not found: {key}");
+            throw new KeyNotFoundException($"La clave no existe: {key}");
         }
 
-        // O(1) promedio - verificar si existe
+        // Verifica si la clave existe (O(1) promedio)
         public bool ContainsKey(TKey key)
         {
             int index = GetBucketIndex(key);
-            Entry entry = _buckets[index];
+            Entry current = buckets[index];
 
-            while (entry != null)
+            while (current != null)
             {
-                if (entry.Key.Equals(key))
+                if (current.Key.Equals(key))
                     return true;
-                entry = entry.Next;
+
+                current = current.Next;
             }
 
             return false;
         }
 
-        // O(1) - calcular índice del bucket
+        // Calcula el bucket usando hash positivo
         private int GetBucketIndex(TKey key)
         {
-            int hash = key.GetHashCode();
-            return (hash & 0x7FFFFFFF) % _capacity;
+            int hash = key.GetHashCode() & 0x7FFFFFFF;
+            return hash % capacity;
         }
 
-        // O(n) - redimensionar tabla
+        // Duplica el tamaño y reubica todo (O(n))
         private void Resize()
         {
-            int oldCapacity = _capacity;
-            Entry[] oldBuckets = _buckets;
+            int oldCapacity = capacity;
+            Entry[] oldBuckets = buckets;
 
-            _capacity *= 2;
-            _buckets = new Entry[_capacity];
-            _size = 0;
+            capacity *= 2;
+            buckets = new Entry[capacity];
+            size = 0;
 
+            // Reinsertamos todas las entradas
             for (int i = 0; i < oldCapacity; i++)
             {
-                Entry entry = oldBuckets[i];
-                while (entry != null)
+                Entry current = oldBuckets[i];
+                while (current != null)
                 {
-                    Put(entry.Key, entry.Value);
-                    entry = entry.Next;
+                    Put(current.Key, current.Value);
+                    current = current.Next;
                 }
             }
         }
 
-        // O(1) - crear iterador
+        // Iterador de la tabla hash
         public IIterator<KeyValuePair<TKey, TValue>> CreateIterator()
         {
             return new HashMapIterator(this);
@@ -132,64 +136,63 @@ namespace Project02_Dendogram.Models.DataStructures
 
         private class HashMapIterator : IIterator<KeyValuePair<TKey, TValue>>
         {
-            private readonly CustomHashMap<TKey, TValue> _map;
-            private int _bucketIndex;
-            private Entry _current;
+            private readonly CustomHashMap<TKey, TValue> map;
+            private int bucketIndex;
+            private Entry current;
 
             public HashMapIterator(CustomHashMap<TKey, TValue> map)
             {
-                _map = map;
-                _bucketIndex = 0;
-                _current = null;
-                FindNextBucket();
+                this.map = map;
+                bucketIndex = 0;
+                current = null;
+                MoveToNextBucket();
             }
 
             public bool HasNext()
             {
-                return _current != null;
+                return current != null;
             }
 
             public KeyValuePair<TKey, TValue> Next()
             {
                 if (!HasNext())
-                    throw new InvalidOperationException("No more elements");
+                    throw new InvalidOperationException("No hay más elementos.");
 
-                var result = new KeyValuePair<TKey, TValue>(_current.Key, _current.Value);
-                _current = _current.Next;
+                var result = new KeyValuePair<TKey, TValue>(current.Key, current.Value);
+                current = current.Next;
 
-                if (_current == null)
-                    FindNextBucket();
+                if (current == null)
+                    MoveToNextBucket();
 
                 return result;
             }
 
             public void Reset()
             {
-                _bucketIndex = 0;
-                _current = null;
-                FindNextBucket();
+                bucketIndex = 0;
+                current = null;
+                MoveToNextBucket();
             }
 
-            private void FindNextBucket()
+            private void MoveToNextBucket()
             {
-                while (_bucketIndex < _map._capacity)
+                while (bucketIndex < map.capacity)
                 {
-                    if (_map._buckets[_bucketIndex] != null)
+                    if (map.buckets[bucketIndex] != null)
                     {
-                        _current = _map._buckets[_bucketIndex];
-                        _bucketIndex++;
+                        current = map.buckets[bucketIndex];
+                        bucketIndex++;
                         return;
                     }
-                    _bucketIndex++;
+                    bucketIndex++;
                 }
-                _current = null;
+
+                current = null;
             }
         }
     }
 
-    // ============================================================================
-    // KeyValuePair.cs - Par clave-valor
-    // ============================================================================
+    // Estructura simple clave-valor
     public struct KeyValuePair<TKey, TValue>
     {
         public TKey Key { get; }
