@@ -5,6 +5,11 @@ namespace Project02_Dendogram
 {
     internal class Program
     {
+        // Integrantes:
+        // Andrey Jesús Solano Rojas
+        // Wilson José Umaña Ríos
+        // Gabriel Sánchez Chacón
+
         [STAThread]
         static void Main(string[] args)
         {

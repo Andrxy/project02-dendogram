@@ -32,20 +32,8 @@ namespace Project02_Dendogram.Services
             {
                 Movie movie = it.Next();
                 movie.FeatureVector = _vectorizer.Vectorize(movie);
-                movie.WeightedFeatureVector = CopyVector(movie.FeatureVector);
+                movie.WeightedFeatureVector = new CustomVector<double>(movie.FeatureVector);
             }
-        }
-
-        private CustomVector<double> CopyVector(CustomVector<double> v)
-        {
-            CustomVector<double> r = new CustomVector<double>(v.Count);
-            IIterator<double> it = v.CreateIterator();
-            while (it.HasNext())
-            {
-                r.Add(it.Next());
-            }
-
-            return r;
         }
 
         public CategoryIndexer Indexer => _indexer;

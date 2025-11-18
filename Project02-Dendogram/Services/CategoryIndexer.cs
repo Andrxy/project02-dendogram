@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Text;
 using Project02_Dendogram.Models;
 using Project02_Dendogram.Models.DataStructures;
 using Project02_Dendogram.Models.DataStructures.Interfaces;
@@ -11,33 +7,42 @@ namespace Project02_Dendogram.Services
 {
     internal class CategoryIndexer
     {
-        public CustomHashMap<string, int> GenreIndex { get; private set; }
-        public CustomHashMap<string, int> CastIndex { get; private set; }
-        public CustomHashMap<string, int> DirectorIndex { get; private set; }
-        public CustomHashMap<string, int> KeywordsIndex { get; private set; }
-        public CustomHashMap<string, int> ProductionCompaniesIndex { get; private set; }
-        public CustomHashMap<string, int> SpokenLanguagesIndex { get; private set; }
+        // Diccionario general: nombre de categoría mapeado su mapa de índices
+        public CustomHashMap<string, CustomHashMap<string, int>> _categoryIndices {  get; set; }
+        private readonly string[] _categorical = { "genres", "cast", "directors", "keywords", "companies", "languages" };
+
+
+        public CategoryIndexer()
+        {
+            _categoryIndices = new CustomHashMap<string, CustomHashMap<string, int>>();
+
+            // Crear los mapas vacíos para cada categoría
+            foreach (string variable in _categorical)
+                _categoryIndices.Put(variable, new CustomHashMap<string, int>());
+        }
 
         public void BuildIndices(CustomList<Movie> movies)
         {
-            GenreIndex = new CustomHashMap<string, int>();
-            CastIndex = new CustomHashMap<string, int>();
-            DirectorIndex = new CustomHashMap<string, int>();
-            KeywordsIndex = new CustomHashMap<string, int>();
-            ProductionCompaniesIndex = new CustomHashMap<string, int>();
-            SpokenLanguagesIndex = new CustomHashMap<string, int>();
-
             IIterator<Movie> it = movies.CreateIterator();
+
             while (it.HasNext())
             {
                 Movie movie = it.Next();
-                AddToIndex(movie.Genres, GenreIndex);
-                AddToIndex(movie.Cast, CastIndex);
-                AddToIndex(movie.Directors, DirectorIndex);
-                AddToIndex(movie.Keywords, KeywordsIndex);
-                AddToIndex(movie.ProductionCompanies, ProductionCompaniesIndex);
-                AddToIndex(movie.SpokenLanguages, SpokenLanguagesIndex);
+                foreach (string variable in _categorical)
+                    AddToIndex(movie.GetCategorical(variable), _categoryIndices.Get(variable));
             }
+
+            StringBuilder sb = new StringBuilder();
+            sb.AppendLine("=== Stats de categorías ===");
+
+            foreach (string variable in _categorical)
+            {
+                var map = _categoryIndices.Get(variable);
+                sb.AppendLine($"{variable}: {map.Count} elementos");
+            }
+
+            System.Windows.MessageBox.Show(sb.ToString(), "Stats de categorías");
+
         }
 
         private void AddToIndex(string[] items, CustomHashMap<string, int> indexMap)
@@ -47,8 +52,20 @@ namespace Project02_Dendogram.Services
             foreach (string item in items)
             {
                 if (!string.IsNullOrWhiteSpace(item) && !indexMap.ContainsKey(item))
-                    indexMap.Put(item, indexMap.Count);
+                {
+                    int newIndex = indexMap.Count;
+                    indexMap.Put(item, newIndex);
+                }
             }
+        }
+
+        // obtener cualquier mapa
+        public CustomHashMap<string, int> GetIndexMap(string categoryName)
+        {
+            if (_categoryIndices.ContainsKey(categoryName))
+                return _categoryIndices.Get(categoryName);
+
+            throw new Exception($"Índice no encontrado para la categoría '{categoryName}'.");
         }
     }
 }

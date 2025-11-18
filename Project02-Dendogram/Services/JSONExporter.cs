@@ -17,7 +17,7 @@ namespace Project02_Dendogram.Services
 
             ClusterJson json = new ClusterJson();
 
-            // Distance del merge
+            // Distancia 
             json.d = cluster.Distance;
 
             // Nombre (solo hojas tienen un Movie)
@@ -38,19 +38,18 @@ namespace Project02_Dendogram.Services
         {
             ClusterJson jsonRoot = ConvertToJson(root);
 
-            // Crear las opciones de serialización
             JsonSerializerOptions options = new JsonSerializerOptions();
-            options.WriteIndented = true;      // Formatear el JSON con sangrías
-            options.MaxDepth = 200;            // Establecer un límite de profundidad mayor, ajusta según sea necesario
+            options.WriteIndented = true;      // indentado
+            options.MaxDepth = 200;            // que sea profundo
             options.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles; // Ignorar referencias circulares
 
-            // Convertir a JSON usando las opciones configuradas
+            // Convertir a JSON
             string jsonString = JsonSerializer.Serialize(jsonRoot, options);
 
-            // Generar la ruta completa del archivo de salida
+            // la ruta del archivo
             string finalPath = Path.Combine(_filePath, "dendrogram.json");
 
-            // Escribir el JSON en el archivo
+            // escribir y guardar
             File.WriteAllText(finalPath, jsonString);
         }
     }

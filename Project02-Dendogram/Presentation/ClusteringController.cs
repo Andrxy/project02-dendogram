@@ -3,6 +3,9 @@ using System.IO;
 using Project02_Dendogram.Models;
 using Project02_Dendogram.Models.DataStructures;
 using Project02_Dendogram.Services;
+using System.Diagnostics;
+using System.Text;
+using System.Windows;
 
 namespace Project02_Dendogram.Presentation
 {
@@ -13,8 +16,8 @@ namespace Project02_Dendogram.Presentation
 
         public ClusteringController(ClusteringModel model)
         {
-            _model = model ?? throw new ArgumentNullException(nameof(model));
-            _config = ConfigurationManager.Instance;
+            _model = model;
+            _config = ConfigurationManager.GetInstance();
         }
 
         public void LoadFile(string filePath)
@@ -37,13 +40,14 @@ namespace Project02_Dendogram.Presentation
 
         public void UpdateNormalizationStrategy(string featureName, string strategyName)
         {
-            _config.SetNormalizationStrategyByName(featureName, strategyName);
+            _config.SetNormalizationStrategy(featureName, strategyName);
             _model.StatusMessage = $"Normalización de '{featureName}' cambiada a '{strategyName}'";
         }
 
         public void UpdateVariableConfig(string variableName, bool isEnabled, double weight)
         {
             _config.UpdateVariableConfig(variableName, isEnabled, weight);
+            _model.StatusMessage = $"Variable '{variableName}' actualizada: Enabled={isEnabled}, Weight={weight}";
         }
 
         public void ExecuteClustering()
@@ -61,23 +65,19 @@ namespace Project02_Dendogram.Presentation
                 _model.StatusMessage = "Paso 2/6: Vectorizando características...";
                 VectorizeMovies();
 
-                // 3. Inicializar pesos para el dataset completo
-                _model.StatusMessage = "Paso 3/6: Inicializando configuración...";
-                _config.InitializeWeightsForDataset(_model.VectorizationService);
-
-                // 4. Normalizar datos
-                _model.StatusMessage = "Paso 4/6: Normalizando datos...";
+                // 3. Normalizar datos
+                _model.StatusMessage = "Paso 3/6: Normalizando datos...";
                 _config.NormalizeDataset(_model.Movies);
 
-                // 5. Aplicar pesos
-                _model.StatusMessage = "Paso 5/6: Aplicando ponderación...";
+                // 4. Aplicar pesos
+                _model.StatusMessage = "Paso 4/6: Aplicando ponderación...";
                 _config.ApplyWeightsToDataset(_model.Movies, _model.VectorizationService);
 
-                // 6. Construir dendrograma
-                _model.StatusMessage = "Paso 6/6: Construyendo dendrograma...";
+                // 5. Construir dendrograma
+                _model.StatusMessage = "Paso 5/6: Construyendo dendrograma...";
                 BuildDendogram();
 
-                // 7. Exportar a JSON
+                // 6. Exportar a JSON
                 ExportDendogramToJSON();
 
                 _model.StatusMessage = "✓ Clustering completado exitosamente";

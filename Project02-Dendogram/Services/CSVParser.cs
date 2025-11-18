@@ -15,6 +15,7 @@ namespace Project02_Dendogram.Services
             _filePath = filePath ?? @"../../../Resources/test30.csv";
         }
 
+        // leer datos del database
         public CustomList<Movie> ParseMovies()
         {
             CustomList<Movie> movies = new CustomList<Movie>();
@@ -25,7 +26,7 @@ namespace Project02_Dendogram.Services
             using (TextFieldParser parser = new TextFieldParser(_filePath))
             {
                 parser.TextFieldType = FieldType.Delimited;
-                parser.SetDelimiters(",");       // Separador CSV
+                parser.SetDelimiters(",");       // Separador del csv
                 parser.HasFieldsEnclosedInQuotes = true;
 
                 // Saltamos la primera línea si es encabezado
@@ -36,9 +37,9 @@ namespace Project02_Dendogram.Services
                 {
                     try
                     {
-                        string[] fields = parser.ReadFields();
-                        Movie movie = ParseLine(fields);
-                        movies.Add(movie);
+                        string[] fields = parser.ReadFields(); // lee toda la linea
+                        Movie movie = ParseLine(fields); // parsea pelicula
+                        movies.Add(movie); 
                     }
                     catch (Exception ex)
                     {
@@ -54,7 +55,6 @@ namespace Project02_Dendogram.Services
         {
             Movie movie = new Movie();
 
-            movie.Index = ParseDouble(values[0]);
             movie.Budget = ParseDouble(values[1]);
             movie.Genres = ParseString(values[2]);
             movie.Keywords = ParseString(values[5]);
@@ -86,6 +86,7 @@ namespace Project02_Dendogram.Services
             return 0;
         }
 
+        // obtener el anio
         private double ParseYear(string value)
         {
             if (DateTime.TryParse(value, out DateTime date))
@@ -94,18 +95,11 @@ namespace Project02_Dendogram.Services
             return 0;
         }
 
+        // obtener un array de los items separados por comas
         private string[] ParseString(string value)
         {
-            if (string.IsNullOrWhiteSpace(value))
-                return Array.Empty<string>();
-
-            // Eliminamos comillas si existen
             value = value.Trim('"');
-
             string[] split = value.Split(',');
-            for (int i = 0; i < split.Length; i++)
-                split[i] = split[i].Trim();
-
             return split;
         }
     }

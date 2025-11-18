@@ -172,7 +172,7 @@ namespace Project02_Dendogram.Presentation
             // Variables categóricas
             UpdateVariable("genres", chkGenres, txtGenres);
             UpdateVariable("cast", chkCast, txtCast);
-            UpdateVariable("director", chkDirector, txtDirector);
+            UpdateVariable("directors", chkDirector, txtDirector);
             UpdateVariable("keywords", chkKeywords, txtKeywords);
             UpdateVariable("companies", chkCompanies, txtCompanies);
             UpdateVariable("languages", chkLanguages, txtLanguages);
@@ -187,13 +187,13 @@ namespace Project02_Dendogram.Presentation
 
         private void CaptureNormalizationConfiguration()
         {
-            UpdateNormalization("Budget", cmbBudget);
-            UpdateNormalization("Popularity", cmbPopularity);
-            UpdateNormalization("Revenue", cmbRevenue);
-            UpdateNormalization("Runtime", cmbRuntime);
-            UpdateNormalization("VoteAverage", cmbVoteAverage);
-            UpdateNormalization("VoteCount", cmbVoteCount);
-            UpdateNormalization("ReleaseYear", cmbReleaseYear);
+            UpdateNormalization("budget", cmbBudget);
+            UpdateNormalization("popularity", cmbPopularity);
+            UpdateNormalization("revenue", cmbRevenue);
+            UpdateNormalization("runtime", cmbRuntime);
+            UpdateNormalization("voteaverage", cmbVoteAverage);
+            UpdateNormalization("votecount", cmbVoteCount);
+            UpdateNormalization("releaseyear", cmbReleaseYear);
         }
 
         private void UpdateNormalization(string featureName, ComboBox comboBox)

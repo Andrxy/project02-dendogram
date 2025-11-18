@@ -6,7 +6,6 @@ namespace Project02_Dendogram.Models
     public class Movie
     {
         // Datos de Identificacion
-        public double Index { get; set; }
         public string Title { get; set; }
 
         // Variables Numericas
@@ -33,5 +32,34 @@ namespace Project02_Dendogram.Models
             FeatureVector = new CustomVector<double>();
             WeightedFeatureVector = new CustomVector<double>();
         }
+
+        public double GetNumerical(string variable)
+        {
+            switch (variable)
+            {
+                case "budget": return Budget;
+                case "popularity": return Popularity;
+                case "revenue": return Revenue;
+                case "runtime": return Runtime;
+                case "voteaverage": return VoteAverage;
+                case "votecount": return VoteCount;
+                case "releaseyear": return ReleaseYear;
+                default: return 0;
+            }
+        }
+        public string[] GetCategorical(string variable)
+        {
+            switch (variable)
+            {
+                case "genres": return Genres;
+                case "cast": return Cast;
+                case "directors": return Directors;
+                case "keywords": return Keywords;
+                case "companies": return ProductionCompanies;
+                case "languages": return SpokenLanguages;
+                default: return new string[0];
+            }
+        }
+
     }
 }

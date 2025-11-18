@@ -16,6 +16,7 @@ namespace Project02_Dendogram.Presentation
         public string LoadedFilePath { get; set; }
         public VectorizationService VectorizationService { get; set; }
         public string StatusMessage { get; set; }
+
         public bool IsFileLoaded => !string.IsNullOrEmpty(LoadedFilePath);
         public bool IsProcessingComplete => DendrogramRoot != null;
         public bool IsReadyForClustering => Movies != null && Movies.Count > 0;
@@ -36,7 +37,10 @@ namespace Project02_Dendogram.Presentation
 
         public string GetDatasetInfo()
         {
-            return "";
-        } 
+            if (Movies == null || Movies.Count == 0)
+                return "No hay datos cargados";
+
+            return $"Películas cargadas: {Movies.Count}";
+        }
     }
 }

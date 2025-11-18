@@ -22,6 +22,12 @@ namespace Project02_Dendogram.Models.DataStructures
             _size = 0;
         }
 
+        public CustomVector(CustomVector<T> other) : this(other._capacity)   
+        {
+            for (int i = 0; i < other._size; i++)
+                Add(other._vector[i]);
+        }
+
         public int Count => _size;
 
         // O(1) - acceso directo
@@ -72,17 +78,6 @@ namespace Project02_Dendogram.Models.DataStructures
             }
         }
 
-        public override string ToString()
-        {
-            string result = "[";
-            for (int i = 0; i < _size; i++)
-            {
-                result += _vector[i].ToString();
-                if (i < _size - 1)
-                    result += ", ";
-            }
-            result += "]";
-            return result;
-        }
+
     } 
 }

@@ -1,93 +1,81 @@
 ﻿using Project02_Dendogram.Models;
 using Project02_Dendogram.Models.DataStructures;
-using Project02_Dendogram.Models.DataStructures.Interfaces;
 using Project02_Dendogram.Strategies.Distance;
 
 namespace Project02_Dendogram.Services
 {
     internal class DendogramBuilder
     {
-        private readonly IDistanceStrategy _strategy;
+        // Estrategia de distancia que usaremos para calcular similitud entre películas
+        private readonly IDistanceStrategy _distanceStrategy;
 
         public DendogramBuilder(IDistanceStrategy strategy)
         {
-            _strategy = strategy;
+            _distanceStrategy = strategy;
         }
 
+        // Construye el dendograma completo a partir de la lista de películas
         public Cluster BuildDendogram(CustomList<Movie> movies)
         {
-            var matrix = BuildDistanceMatrix(movies);
-            var clusters = InitializeClusters(movies);
-            return RunHAC(clusters, matrix);
+            // Primero calculamos la matriz de distancias
+            CustomMatrix<double> matrix = BuildDistanceMatrix(movies);
+
+            // Inicializamos cada película como un cluster individual
+            CustomList<Cluster> clusters = InitializeClusters(movies);
+
+            // Repetimos hasta que quede un solo cluster
+            while (clusters.Count > 1)
+            {
+                // Encontramos los dos clusters más cercanos
+                var (a, b, dist) = FindClosestClusters(matrix, clusters.Count);
+
+                // Los fusionamos en un nuevo cluster
+                var merged = new Cluster(clusters.GetAt(a), clusters.GetAt(b), dist);
+
+                // Actualizamos la matriz de distancias con el cluster fusionado
+                matrix = UpdateMatrix(matrix, clusters, a, b, merged);
+
+                // Actualizamos la lista de clusters
+                clusters = UpdateClusters(clusters, a, b, merged);
+            }
+
+            // Devuelve el cluster final que representa todo el dendograma
+            return clusters.GetAt(0);
         }
 
+        // Construye la matriz de distancias entre todas las películas
         private CustomMatrix<double> BuildDistanceMatrix(CustomList<Movie> movies)
         {
             int n = movies.Count;
-            CustomMatrix<double> M = new CustomMatrix<double>(n);
+            var matrix = new CustomMatrix<double>(n);
 
             for (int i = 0; i < n; i++)
             {
                 for (int j = 0; j < n; j++)
                 {
-                    if (i == j)
-                    {
-                        M.SetAt(i, j, 0);
-                    }
-                    else if (j < i)
-                    {
-                        M.SetAt(i, j, M.GetAt(j, i));
-                    }
-                    else
-                    {
-                        double d = _strategy.Calculate(
-                            movies.GetAt(i).WeightedFeatureVector,
-                            movies.GetAt(j).WeightedFeatureVector
-                        );
-                        M.SetAt(i, j, d);
-                    }
+                    if (i == j) continue; // La distancia de un cluster consigo mismo siempre es 0
+
+                    // Como la matriz es simétrica, reutilizamos la distancia calculada si j<i
+                    double distance = j < i ? matrix.GetAt(j, i) : _distanceStrategy.Calculate(movies.GetAt(i).WeightedFeatureVector, movies.GetAt(j).WeightedFeatureVector);
+
+                    matrix.SetAt(i, j, distance);
                 }
             }
 
-            return M;
+            return matrix;
         }
 
+        // Inicializa cada película como un cluster individual
         private CustomList<Cluster> InitializeClusters(CustomList<Movie> movies)
         {
             CustomList<Cluster> clusters = new CustomList<Cluster>();
-
             for (int i = 0; i < movies.Count; i++)
                 clusters.Add(new Cluster(movies.GetAt(i), i));
-
             return clusters;
         }
 
-        private Cluster RunHAC(CustomList<Cluster> clusters, CustomMatrix<double> M)
-        {
-            while (clusters.Count > 1)
-            {
-                var (idxA, idxB, dist) = FindClosestClusters(M, clusters.Count);
-
-                Cluster merged = new Cluster(
-                    clusters.GetAt(idxA),
-                    clusters.GetAt(idxB),
-                    dist
-                );
-
-                CustomMatrix<double> newMatrix = RebuildMatrix(
-                    M, clusters, idxA, idxB, merged
-                );
-
-                clusters = RebuildClusterList(clusters, idxA, idxB, merged);
-
-                M = newMatrix;
-            }
-
-            return clusters.GetAt(0);
-        }
-
-        private (int idxA, int idxB, double dist) FindClosestClusters(
-            CustomMatrix<double> M, int size)
+        // Encuentra los dos clusters más cercanos en la matriz de distancias
+        private (int, int, double) FindClosestClusters(CustomMatrix<double> matrix, int size)
         {
             double minDist = double.MaxValue;
             int idxA = -1, idxB = -1;
@@ -96,10 +84,9 @@ namespace Project02_Dendogram.Services
             {
                 for (int j = i + 1; j < size; j++)
                 {
-                    double d = M.GetAt(i, j);
-                    if (d < minDist)
+                    if (matrix.GetAt(i, j) < minDist)
                     {
-                        minDist = d;
+                        minDist = matrix.GetAt(i, j);
                         idxA = i;
                         idxB = j;
                     }
@@ -109,119 +96,66 @@ namespace Project02_Dendogram.Services
             return (idxA, idxB, minDist);
         }
 
-        // ===================================================================
-        // CORRECCIÓN PRINCIPAL: Acceso correcto a la matriz simétrica
-        // ===================================================================
-        private CustomMatrix<double> RebuildMatrix(
-            CustomMatrix<double> oldM,
-            CustomList<Cluster> clusters,
-            int idxA,
-            int idxB,
-            Cluster merged)
+        // Actualiza la matriz de distancias después de fusionar dos clusters
+        private CustomMatrix<double> UpdateMatrix(CustomMatrix<double> oldMatrix, CustomList<Cluster> clusters, int a, int b, Cluster merged)
         {
-            int oldSize = clusters.Count;
-            int newSize = oldSize - 1;
-            CustomMatrix<double> newM = new CustomMatrix<double>(newSize);
+            int newSize = clusters.Count - 1;
+            var newMatrix = new CustomMatrix<double>(newSize);
 
-            // Asegurar que idxA < idxB para simplificar la lógica
-            if (idxA > idxB)
+            // Calculamos las distancias del nuevo cluster fusionado con los demás clusters
+            int colIndex = 1;
+            for (int k = 0; k < clusters.Count; k++)
             {
-                int temp = idxA;
-                idxA = idxB;
-                idxB = temp;
+                if (k == a || k == b) continue;
+
+                double distamce = (clusters.GetAt(a).Indexes.Count * GetDistance(oldMatrix, a, k)
+                             + clusters.GetAt(b).Indexes.Count * GetDistance(oldMatrix, b, k))
+                              / (clusters.GetAt(a).Indexes.Count + clusters.GetAt(b).Indexes.Count);
+
+                newMatrix.SetAt(0, colIndex, distamce);
+                newMatrix.SetAt(colIndex, 0, distamce);
+                colIndex++;
             }
 
-            // ---- Nueva fila/columna 0 (cluster merged) ----
-            int col = 1;
-
-            for (int k = 0; k < oldSize; k++)
-            {
-                if (k == idxA || k == idxB) continue;
-
-                double dist = ComputeNewClusterDistance(
-                    oldM,
-                    idxA,
-                    idxB,
-                    k,
-                    clusters.GetAt(idxA).Indexes.Count,
-                    clusters.GetAt(idxB).Indexes.Count
-                );
-
-                newM.SetAt(0, col, dist);
-                newM.SetAt(col, 0, dist);
-                col++;
-            }
-
-            // ---- Copiar submatriz (clusters no fusionados) ----
-            int newRow = 1;
-
-            for (int i = 0; i < oldSize; i++)
-            {
-                if (i == idxA || i == idxB) continue;
-
-                int newCol = 1;
-
-                for (int j = 0; j < oldSize; j++)
-                {
-                    if (j == idxA || j == idxB) continue;
-
-                    newM.SetAt(newRow, newCol, oldM.GetAt(i, j));
-                    newCol++;
-                }
-
-                newRow++;
-            }
-
-            return newM;
-        }
-
-        private CustomList<Cluster> RebuildClusterList(
-            CustomList<Cluster> clusters,
-            int idxA,
-            int idxB,
-            Cluster merged)
-        {
-            CustomList<Cluster> newList = new CustomList<Cluster>();
-            newList.Add(merged);
-
+            // Copiamos las distancias de los clusters que no fueron fusionados
+            int rowIndex = 1;
             for (int i = 0; i < clusters.Count; i++)
             {
-                if (i != idxA && i != idxB)
-                    newList.Add(clusters.GetAt(i));
+                if (i == a || i == b) continue;
+
+                int col = 1;
+                for (int j = 0; j < clusters.Count; j++)
+                {
+                    if (j == a || j == b) continue;
+                    newMatrix.SetAt(rowIndex, col++, oldMatrix.GetAt(i, j));
+                }
+                rowIndex++;
             }
 
-            return newList;
+            return newMatrix;
         }
 
-        // ===================================================================
-        // CORRECCIÓN: Acceso correcto a matriz simétrica
-        // ===================================================================
-        private double ComputeNewClusterDistance(
-            CustomMatrix<double> M,
-            int idxA,
-            int idxB,
-            int k,
-            int sizeA,
-            int sizeB)
+        // Actualiza la lista de clusters después de la fusión
+        private CustomList<Cluster> UpdateClusters(CustomList<Cluster> clusters, int a, int b, Cluster merged)
         {
-            // Acceso simétrico: siempre usar (min, max) para evitar errores
-            double dA = GetSymmetricDistance(M, idxA, k);
-            double dB = GetSymmetricDistance(M, idxB, k);
-
-            return (sizeA * dA + sizeB * dB) / (sizeA + sizeB);
-        }
-
-        // Método auxiliar para acceder correctamente a la matriz simétrica
-        private double GetSymmetricDistance(CustomMatrix<double> M, int i, int j)
-        {
-            if (i == j)
-                return 0;
-
-            // Siempre acceder a la parte superior de la matriz simétrica
-            if (i < j)
-                return M.GetAt(i, j);
+            if (a > b)
+            {
+                clusters.RemoveAt(a);
+                clusters.RemoveAt(b);
+            }
             else
-                return M.GetAt(j, i);
+            {
+                clusters.RemoveAt(b);
+                clusters.RemoveAt(a);
+            }
+            clusters.Add(merged);
+            return clusters;
+        }
+
+        // Helper para acceder correctamente a la matriz simétrica
+        private double GetDistance(CustomMatrix<double> matrix, int i, int j)
+        {
+            return i < j ? matrix.GetAt(i, j) : matrix.GetAt(j, i);
         }
     }
 }

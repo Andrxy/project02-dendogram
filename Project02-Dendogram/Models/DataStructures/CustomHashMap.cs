@@ -3,7 +3,7 @@ using Project02_Dendogram.Models.DataStructures.Interfaces;
 
 namespace Project02_Dendogram.Models.DataStructures
 {
-    public class CustomHashMap<TKey, TValue> : IIterable<KeyValuePair<TKey, TValue>>
+    public class CustomHashMap<TKey, TValue>
     {
         // Nodo interno para la lista enlazada usada en colisiones
         private class Entry
@@ -128,80 +128,18 @@ namespace Project02_Dendogram.Models.DataStructures
             }
         }
 
-        // Iterador de la tabla hash
-        public IIterator<KeyValuePair<TKey, TValue>> CreateIterator()
+
+        // Estructura simple clave-valor
+        public struct KeyValuePair<TKey, TValue>
         {
-            return new HashMapIterator(this);
-        }
+            public TKey Key { get; }
+            public TValue Value { get; }
 
-        private class HashMapIterator : IIterator<KeyValuePair<TKey, TValue>>
-        {
-            private readonly CustomHashMap<TKey, TValue> map;
-            private int bucketIndex;
-            private Entry current;
-
-            public HashMapIterator(CustomHashMap<TKey, TValue> map)
+            public KeyValuePair(TKey key, TValue value)
             {
-                this.map = map;
-                bucketIndex = 0;
-                current = null;
-                MoveToNextBucket();
+                Key = key;
+                Value = value;
             }
-
-            public bool HasNext()
-            {
-                return current != null;
-            }
-
-            public KeyValuePair<TKey, TValue> Next()
-            {
-                if (!HasNext())
-                    throw new InvalidOperationException("No hay más elementos.");
-
-                var result = new KeyValuePair<TKey, TValue>(current.Key, current.Value);
-                current = current.Next;
-
-                if (current == null)
-                    MoveToNextBucket();
-
-                return result;
-            }
-
-            public void Reset()
-            {
-                bucketIndex = 0;
-                current = null;
-                MoveToNextBucket();
-            }
-
-            private void MoveToNextBucket()
-            {
-                while (bucketIndex < map.capacity)
-                {
-                    if (map.buckets[bucketIndex] != null)
-                    {
-                        current = map.buckets[bucketIndex];
-                        bucketIndex++;
-                        return;
-                    }
-                    bucketIndex++;
-                }
-
-                current = null;
-            }
-        }
-    }
-
-    // Estructura simple clave-valor
-    public struct KeyValuePair<TKey, TValue>
-    {
-        public TKey Key { get; }
-        public TValue Value { get; }
-
-        public KeyValuePair(TKey key, TValue value)
-        {
-            Key = key;
-            Value = value;
         }
     }
 }
