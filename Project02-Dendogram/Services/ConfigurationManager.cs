@@ -52,7 +52,7 @@ namespace Project02_Dendogram.Services
                 {
                     Name = variable,
                     IsEnabled = true,
-                    Weight = 1.0   // que no quede todo en 0
+                    Weight = 0.0   // que no quede todo en 0
                 });
 
                 // normalización por defecto
@@ -66,7 +66,7 @@ namespace Project02_Dendogram.Services
                 {
                     Name = variable,
                     IsEnabled = true,
-                    Weight = 1.0
+                    Weight = 0.0
                 });
             }
 
@@ -107,7 +107,7 @@ namespace Project02_Dendogram.Services
         // Normaliza solo las numéricas (las categóricas no se normalizan, obvio)
         public void NormalizeDataset(CustomList<Movie> movies)
         {
-            // primero calculo los datos que necesita la normalización
+            // primero calcula los datos que necesita la normalización
             for (int i = 0; i < _numerical.Length; i++)
             {
                 string variable = _numerical[i];
@@ -115,7 +115,7 @@ namespace Project02_Dendogram.Services
                 strategy.CalculateStats(movies, i);
             }
 
-            // ahora sí modifico cada película
+            // ahora se modifica cada película
             IIterator<Movie> it = movies.CreateIterator();
             while (it.HasNext())
             {
@@ -132,25 +132,9 @@ namespace Project02_Dendogram.Services
                     movie.WeightedFeatureVector.SetAt(i, normalized);
                 }
             }
-
-            var it2 = movies.CreateIterator();
-            StringBuilder sb = new StringBuilder();
-            int k = 10;
-            sb.Append(_normalizationStrategies).Append('\n');
-            while (it2.HasNext() && k > 0)
-            {
-                var m = it2.Next();
-                sb.Append(m.Title).Append('\n');
-                for (int i = 0; i < m.WeightedFeatureVector.Count; i++)
-                    sb.Append(m.WeightedFeatureVector.GetAt(i)).Append(' ');
-                sb.Append('\n');
-                --k;
-            }
-
-            MessageBox.Show(sb.ToString());
         }
 
-        // Aquí aplico los pesos que haya puesto el usuario
+        // Aquí se aplican los pesos que haya puesto el usuario
         public void ApplyWeightsToDataset(CustomList<Movie> movies, VectorizationService vectorizationService)
         {
             IIterator<Movie> it = movies.CreateIterator();
@@ -190,22 +174,6 @@ namespace Project02_Dendogram.Services
 
                 movie.WeightedFeatureVector = vector;
             }
-
-            var it2 = movies.CreateIterator();
-            StringBuilder sb = new StringBuilder();
-            int k = 10;
-            sb.Append(_normalizationStrategies).Append('\n');
-            while (it2.HasNext() && k > 0)
-            {
-                var m = it2.Next();
-                sb.Append(m.Title).Append('\n');
-                for (int i = 0; i < m.WeightedFeatureVector.Count; i++)
-                    sb.Append(m.WeightedFeatureVector.GetAt(i)).Append(' ');
-                sb.Append('\n');
-                --k;
-            }
-
-            MessageBox.Show(sb.ToString());
         }
     }
 

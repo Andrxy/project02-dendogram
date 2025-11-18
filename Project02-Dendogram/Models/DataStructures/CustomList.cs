@@ -83,6 +83,18 @@ namespace Project02_Dendogram.Models.DataStructures
             _size--;
         }
 
+        public void SetAt(int index, T value)
+        {
+            if (index < 0 || index >= _size)
+                throw new IndexOutOfRangeException($"Índice {index} fuera de rango (_size={_size})");
+
+            Node<T> current = _head;
+            for (int i = 0; i < index; i++)
+                current = current.Next;
+
+            current.Data = value;
+        }
+
         public void Copy(CustomList<T> list)
         {
             IIterator<T> it = list.CreateIterator();

@@ -29,7 +29,7 @@ namespace Project02_Dendogram.Services
                 parser.SetDelimiters(",");       // Separador del csv
                 parser.HasFieldsEnclosedInQuotes = true;
 
-                // Saltamos la primera línea si es encabezado
+                // la primera linea es el encabezado, entonces se salta
                 if (!parser.EndOfData)
                     parser.ReadLine();
 

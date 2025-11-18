@@ -250,7 +250,7 @@
                                     <CheckBox x:Name="chkBudget" Grid.Column="0" IsChecked="True" VerticalAlignment="Center"/>
                                     <TextBlock Grid.Column="1" Text="Presupuesto" VerticalAlignment="Center" FontWeight="Medium"/>
                                     <TextBlock Grid.Column="2" Text="Peso:" VerticalAlignment="Center" Margin="5,0"/>
-                                    <TextBox x:Name="txtBudget" Grid.Column="3" Text="1.0" Style="{StaticResource ModernTextBox}"/>
+                                    <TextBox x:Name="txtBudget" Grid.Column="3" Text="0.0" Style="{StaticResource ModernTextBox}"/>
                                     <TextBlock Grid.Column="4" Text="Normalización:" VerticalAlignment="Center" Margin="10,0,5,0"/>
                                     <ComboBox x:Name="cmbBudget" Grid.Column="5" Style="{StaticResource ModernComboBox}" SelectedIndex="0">
                                         <ComboBoxItem Content="MinMax" Tag="minmax"/>
@@ -274,7 +274,7 @@
                                     <CheckBox x:Name="chkPopularity" Grid.Column="0" IsChecked="True" VerticalAlignment="Center"/>
                                     <TextBlock Grid.Column="1" Text="Popularidad" VerticalAlignment="Center" FontWeight="Medium"/>
                                     <TextBlock Grid.Column="2" Text="Peso:" VerticalAlignment="Center" Margin="5,0"/>
-                                    <TextBox x:Name="txtPopularity" Grid.Column="3" Text="1.0" Style="{StaticResource ModernTextBox}"/>
+                                    <TextBox x:Name="txtPopularity" Grid.Column="3" Text="0.0" Style="{StaticResource ModernTextBox}"/>
                                     <TextBlock Grid.Column="4" Text="Normalización:" VerticalAlignment="Center" Margin="10,0,5,0"/>
                                     <ComboBox x:Name="cmbPopularity" Grid.Column="5" Style="{StaticResource ModernComboBox}" SelectedIndex="0">
                                         <ComboBoxItem Content="MinMax" Tag="minmax"/>
@@ -298,7 +298,7 @@
                                     <CheckBox x:Name="chkRevenue" Grid.Column="0" IsChecked="True" VerticalAlignment="Center"/>
                                     <TextBlock Grid.Column="1" Text="Ingresos" VerticalAlignment="Center" FontWeight="Medium"/>
                                     <TextBlock Grid.Column="2" Text="Peso:" VerticalAlignment="Center" Margin="5,0"/>
-                                    <TextBox x:Name="txtRevenue" Grid.Column="3" Text="1.0" Style="{StaticResource ModernTextBox}"/>
+                                    <TextBox x:Name="txtRevenue" Grid.Column="3" Text="0.0" Style="{StaticResource ModernTextBox}"/>
                                     <TextBlock Grid.Column="4" Text="Normalización:" VerticalAlignment="Center" Margin="10,0,5,0"/>
                                     <ComboBox x:Name="cmbRevenue" Grid.Column="5" Style="{StaticResource ModernComboBox}" SelectedIndex="0">
                                         <ComboBoxItem Content="MinMax" Tag="minmax"/>
@@ -322,7 +322,7 @@
                                     <CheckBox x:Name="chkRuntime" Grid.Column="0" IsChecked="True" VerticalAlignment="Center"/>
                                     <TextBlock Grid.Column="1" Text="Duración" VerticalAlignment="Center" FontWeight="Medium"/>
                                     <TextBlock Grid.Column="2" Text="Peso:" VerticalAlignment="Center" Margin="5,0"/>
-                                    <TextBox x:Name="txtRuntime" Grid.Column="3" Text="1.0" Style="{StaticResource ModernTextBox}"/>
+                                    <TextBox x:Name="txtRuntime" Grid.Column="3" Text="0.0" Style="{StaticResource ModernTextBox}"/>
                                     <TextBlock Grid.Column="4" Text="Normalización:" VerticalAlignment="Center" Margin="10,0,5,0"/>
                                     <ComboBox x:Name="cmbRuntime" Grid.Column="5" Style="{StaticResource ModernComboBox}" SelectedIndex="0">
                                         <ComboBoxItem Content="MinMax" Tag="minmax"/>
@@ -346,7 +346,7 @@
                                     <CheckBox x:Name="chkVoteAverage" Grid.Column="0" IsChecked="True" VerticalAlignment="Center"/>
                                     <TextBlock Grid.Column="1" Text="Calificación" VerticalAlignment="Center" FontWeight="Medium"/>
                                     <TextBlock Grid.Column="2" Text="Peso:" VerticalAlignment="Center" Margin="5,0"/>
-                                    <TextBox x:Name="txtVoteAverage" Grid.Column="3" Text="1.0" Style="{StaticResource ModernTextBox}"/>
+                                    <TextBox x:Name="txtVoteAverage" Grid.Column="3" Text="0.0" Style="{StaticResource ModernTextBox}"/>
                                     <TextBlock Grid.Column="4" Text="Normalización:" VerticalAlignment="Center" Margin="10,0,5,0"/>
                                     <ComboBox x:Name="cmbVoteAverage" Grid.Column="5" Style="{StaticResource ModernComboBox}" SelectedIndex="0">
                                         <ComboBoxItem Content="MinMax" Tag="minmax"/>
@@ -370,7 +370,7 @@
                                     <CheckBox x:Name="chkVoteCount" Grid.Column="0" IsChecked="True" VerticalAlignment="Center"/>
                                     <TextBlock Grid.Column="1" Text="Núm. de Votos" VerticalAlignment="Center" FontWeight="Medium"/>
                                     <TextBlock Grid.Column="2" Text="Peso:" VerticalAlignment="Center" Margin="5,0"/>
-                                    <TextBox x:Name="txtVoteCount" Grid.Column="3" Text="1.0" Style="{StaticResource ModernTextBox}"/>
+                                    <TextBox x:Name="txtVoteCount" Grid.Column="3" Text="0.0" Style="{StaticResource ModernTextBox}"/>
                                     <TextBlock Grid.Column="4" Text="Normalización:" VerticalAlignment="Center" Margin="10,0,5,0"/>
                                     <ComboBox x:Name="cmbVoteCount" Grid.Column="5" Style="{StaticResource ModernComboBox}" SelectedIndex="0">
                                         <ComboBoxItem Content="MinMax" Tag="minmax"/>
@@ -394,7 +394,7 @@
                                     <CheckBox x:Name="chkReleaseYear" Grid.Column="0" IsChecked="True" VerticalAlignment="Center"/>
                                     <TextBlock Grid.Column="1" Text="Año de Lanzamiento" VerticalAlignment="Center" FontWeight="Medium"/>
                                     <TextBlock Grid.Column="2" Text="Peso:" VerticalAlignment="Center" Margin="5,0"/>
-                                    <TextBox x:Name="txtReleaseYear" Grid.Column="3" Text="1.0" Style="{StaticResource ModernTextBox}"/>
+                                    <TextBox x:Name="txtReleaseYear" Grid.Column="3" Text="0.0" Style="{StaticResource ModernTextBox}"/>
                                     <TextBlock Grid.Column="4" Text="Normalización:" VerticalAlignment="Center" Margin="10,0,5,0"/>
                                     <ComboBox x:Name="cmbReleaseYear" Grid.Column="5" Style="{StaticResource ModernComboBox}" SelectedIndex="0">
                                         <ComboBoxItem Content="MinMax" Tag="minmax"/>
@@ -428,7 +428,7 @@
                                     </Grid.ColumnDefinitions>
                                     <CheckBox x:Name="chkGenres" Grid.Column="0" IsChecked="True" VerticalAlignment="Center"/>
                                     <TextBlock Grid.Column="1" Text="Géneros" VerticalAlignment="Center" FontWeight="SemiBold"/>
-                                    <TextBox x:Name="txtGenres" Grid.Column="2" Text="15.0" Style="{StaticResource ModernTextBox}"/>
+                                    <TextBox x:Name="txtGenres" Grid.Column="2" Text="0.0" Style="{StaticResource ModernTextBox}"/>
                                 </Grid>
                             </Border>
 
@@ -442,7 +442,7 @@
                                     </Grid.ColumnDefinitions>
                                     <CheckBox x:Name="chkCast" Grid.Column="0" IsChecked="True" VerticalAlignment="Center"/>
                                     <TextBlock Grid.Column="1" Text="Reparto" VerticalAlignment="Center" FontWeight="Medium"/>
-                                    <TextBox x:Name="txtCast" Grid.Column="2" Text="1.0" Style="{StaticResource ModernTextBox}"/>
+                                    <TextBox x:Name="txtCast" Grid.Column="2" Text="0.0" Style="{StaticResource ModernTextBox}"/>
                                 </Grid>
                             </Border>
                         </StackPanel>
@@ -458,7 +458,7 @@
                                     </Grid.ColumnDefinitions>
                                     <CheckBox x:Name="chkDirector" Grid.Column="0" IsChecked="True" VerticalAlignment="Center"/>
                                     <TextBlock Grid.Column="1" Text="Director" VerticalAlignment="Center" FontWeight="Medium"/>
-                                    <TextBox x:Name="txtDirector" Grid.Column="2" Text="1.0" Style="{StaticResource ModernTextBox}"/>
+                                    <TextBox x:Name="txtDirector" Grid.Column="2" Text="0.0" Style="{StaticResource ModernTextBox}"/>
                                 </Grid>
                             </Border>
 
@@ -472,7 +472,7 @@
                                     </Grid.ColumnDefinitions>
                                     <CheckBox x:Name="chkKeywords" Grid.Column="0" IsChecked="True" VerticalAlignment="Center"/>
                                     <TextBlock Grid.Column="1" Text="Palabras Clave" VerticalAlignment="Center" FontWeight="Medium"/>
-                                    <TextBox x:Name="txtKeywords" Grid.Column="2" Text="1.0" Style="{StaticResource ModernTextBox}"/>
+                                    <TextBox x:Name="txtKeywords" Grid.Column="2" Text="0.0" Style="{StaticResource ModernTextBox}"/>
                                 </Grid>
                             </Border>
                         </StackPanel>
@@ -488,7 +488,7 @@
                                     </Grid.ColumnDefinitions>
                                     <CheckBox x:Name="chkCompanies" Grid.Column="0" IsChecked="True" VerticalAlignment="Center"/>
                                     <TextBlock Grid.Column="1" Text="Productoras" VerticalAlignment="Center" FontWeight="Medium"/>
-                                    <TextBox x:Name="txtCompanies" Grid.Column="2" Text="1.0" Style="{StaticResource ModernTextBox}"/>
+                                    <TextBox x:Name="txtCompanies" Grid.Column="2" Text="0.0" Style="{StaticResource ModernTextBox}"/>
                                 </Grid>
                             </Border>
 
@@ -502,7 +502,7 @@
                                     </Grid.ColumnDefinitions>
                                     <CheckBox x:Name="chkLanguages" Grid.Column="0" IsChecked="True" VerticalAlignment="Center"/>
                                     <TextBlock Grid.Column="1" Text="Idiomas" VerticalAlignment="Center" FontWeight="Medium"/>
-                                    <TextBox x:Name="txtLanguages" Grid.Column="2" Text="1.0" Style="{StaticResource ModernTextBox}"/>
+                                    <TextBox x:Name="txtLanguages" Grid.Column="2" Text="0.0" Style="{StaticResource ModernTextBox}"/>
                                 </Grid>
                             </Border>
                         </StackPanel>

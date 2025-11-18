@@ -31,18 +31,6 @@ namespace Project02_Dendogram.Services
                 foreach (string variable in _categorical)
                     AddToIndex(movie.GetCategorical(variable), _categoryIndices.Get(variable));
             }
-
-            StringBuilder sb = new StringBuilder();
-            sb.AppendLine("=== Stats de categorías ===");
-
-            foreach (string variable in _categorical)
-            {
-                var map = _categoryIndices.Get(variable);
-                sb.AppendLine($"{variable}: {map.Count} elementos");
-            }
-
-            System.Windows.MessageBox.Show(sb.ToString(), "Stats de categorías");
-
         }
 
         private void AddToIndex(string[] items, CustomHashMap<string, int> indexMap)
